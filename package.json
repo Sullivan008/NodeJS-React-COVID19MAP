@@ -16,6 +16,8 @@
   "homepage": "https://github.com/Sullivan008/NodeJS-React-COVID19MAP#readme",
   "dependencies": {
     "axios": "^0.19.2",
-    "csv-parse": "^4.8.8"
+    "cors": "^2.8.5",
+    "csv-parse": "^4.8.8",
+    "express": "^4.17.1"
   }
 }
