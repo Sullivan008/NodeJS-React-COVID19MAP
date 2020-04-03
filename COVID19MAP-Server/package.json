@@ -21,6 +21,7 @@
   "dependencies": {
     "axios": "^0.19.2",
     "cors": "^2.8.5",
+    "cross-env": "^7.0.2",
     "csv-parse": "^4.8.8",
     "express": "^4.17.1"
   }
