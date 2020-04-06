@@ -8,10 +8,10 @@ const Map = props => {
                 { props.places.map(place => { return (
                     <Fragment key = {place.id}>
                         <Marker position = {{ lat: parseFloat(place.latitude),
-                                              lng: parseFloat(place.longtitude)} }>
+                                              lng: parseFloat(place.longitude)} }>
                             { place.circle && 
                               <Circle defaultCenter = {{ lat: parseFloat(place.latitude),
-                                                         lng: parseFloat(place.longtitude) }}
+                                                         lng: parseFloat(place.longitude) }}
                                       radius = {place.circle.radius}
                                       options = {place.circle.options}/> }
                         </Marker>
