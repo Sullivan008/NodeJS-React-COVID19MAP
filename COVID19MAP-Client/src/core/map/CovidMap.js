@@ -1,5 +1,7 @@
+/* global google */
 import React, { Fragment } from "react";
-import { withGoogleMap, GoogleMap, withScriptjs, Marker, Circle } from "react-google-maps";
+import { withGoogleMap, GoogleMap, withScriptjs, Circle } from "react-google-maps";
+import { MarkerWithLabel } from "react-google-maps/lib/components/addons/MarkerWithLabel";
 
 const Map = props => {
     return(
@@ -7,14 +9,17 @@ const Map = props => {
                    defaultCenter = {props.center}>
                 { props.places.map(place => { return (
                     <Fragment key = {place.id}>
-                        <Marker position = {{ lat: parseFloat(place.latitude),
-                                              lng: parseFloat(place.longitude)} }>
+                        <MarkerWithLabel position = {{ lat: parseFloat(place.latitude),
+                                                       lng: parseFloat(place.longitude)} }
+                                         labelAnchor = { new google.maps.Point(0,0) }
+                                         labelStyle = { {background: "yellow", fontSize: "16px", padding: "8px"} }>
+                            <span>{place.text}</span>
+                        </MarkerWithLabel>
                             { place.circle && 
                               <Circle defaultCenter = {{ lat: parseFloat(place.latitude),
                                                          lng: parseFloat(place.longitude) }}
                                       radius = {place.circle.radius}
                                       options = {place.circle.options}/> }
-                        </Marker>
                     </Fragment>)})};
         </GoogleMap>
     );

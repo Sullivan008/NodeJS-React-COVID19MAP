@@ -2,13 +2,12 @@ import React, { useState, useEffect } from 'react';
 import './App.css';
 import { covidDataByCountriesSummarizeJson } from './api';
 
-import CovidMap from './core/CovidMap';
+import CovidMap from './core/map/CovidMap';
 import Geocode from 'react-geocode';
 
-Geocode.setApiKey("YOUR_API_GOOGLE_API_KEY");
+Geocode.setApiKey("YOUR_GOOGLE_API_KEY");
 Geocode.setLanguage("en");
 Geocode.setRegion("us");
-Geocode.enableDebug();
 
 function App() {
   const [covidDataByCountriesSummarize, setData] = useState(null);
@@ -29,7 +28,7 @@ function App() {
 
           coordinatesCache[location] = {lat, lng};
 
-          window.localStorage.setItem('coordinatesCache', JSON.stringify(coordsCache));
+          window.localStorage.setItem('coordinatesCache', JSON.stringify(coordinatesCache));
         });
       });
 
@@ -43,13 +42,14 @@ function App() {
     Object.values(covidDataByCountriesSummarize).map(item => ({
       id: item.location,
       name: item.location,
-      latitude: item.coords.lat,
-      longitude: item.coords.lng,
+      latitude: item.coordinates.lat,
+      longitude: item.coordinates.lng,
       circle: {
         radius: 3000,
         options: {
           strokeColor: "#ff0000"
-        }}
+        }},
+      text: "Total cases: " + item.totalCases + " | Total death: " + item.totalDeaths
     })) : []
 
   return (
@@ -58,7 +58,7 @@ function App() {
         center = {{lat: 40.64, lng: -73.96}}
         zoom = {12}
         places = {places}
-        googleMapURL = "https://maps.googleapis.com/maps/api/js?key=YOUR_API_GOOGLE_API_KEY"
+        googleMapURL = "https://maps.googleapis.com/maps/api/js?key=YOUR_GOOGLE_API_KEY"
         loadingElement = {<div style = {{height: '100%'}} />}
         containerElement = {<div style = {{height: '800px'}}/>}
         mapElement = {<div style = {{height: '100%'}}/>}
