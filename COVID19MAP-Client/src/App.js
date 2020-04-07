@@ -16,6 +16,8 @@ function App() {
   
   useEffect(() => {
     covidDataByCountriesSummarizeJson().then(covidDataByCountriesSummarize => {
+      delete covidDataByCountriesSummarize['World'];
+
       const promises = Object.values(covidDataByCountriesSummarize).map(({location}) => {
         if(coordinatesCache[location]) {
           return covidDataByCountriesSummarize[location].coordinates = coordinatesCache[location];
@@ -49,7 +51,7 @@ function App() {
         options: {
           strokeColor: "#ff0000"
         }},
-      text: "Total cases: " + item.totalCases + " | Total death: " + item.totalDeaths
+      text: item.location + " | Total cases: " + item.totalCases + " | Total death: " + item.totalDeaths
     })) : []
 
   return (
