@@ -15,6 +15,15 @@ function App() {
 
   const totalConfirmed = jsonCovidData ? Math.max(...Object.values(jsonCovidData).map(item => item.confirmed)) : 1;
 
+  const calculateRadius = (calculatingItem) => {
+    const min = 50;
+    const max = 500;
+
+    const radius = (calculatingItem.confirmed / totalConfirmed) * max;
+
+    return radius < min ? min : radius;
+  };
+
   const places = jsonCovidData ? 
     Object.values(jsonCovidData).map(item => ({
       id: item.id,
@@ -22,7 +31,7 @@ function App() {
       latitude: parseInt(item.latitude),
       longitude: parseInt(item.longitude),
       circle: {
-        radius: (item.confirmed / totalConfirmed) * 1000,
+        radius: calculateRadius(item),
         options: {
           strokeColor: "#ff0000"
         }},
