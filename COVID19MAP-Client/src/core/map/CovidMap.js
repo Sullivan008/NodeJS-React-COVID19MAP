@@ -9,7 +9,7 @@ const CovidMap = props => {
 
     const handleZoomChanged = useCallback(() => {
         setZoomLevel(covidMapRef.current.getZoom());
-    });
+    }, [covidMapRef]);
 
     const places = props.places.map(place => { 
         return (
