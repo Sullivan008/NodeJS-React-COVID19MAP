@@ -35,7 +35,7 @@ function App() {
         options: {
           strokeColor: "#ff0000"
         }},
-      text: (item.country + " " + item.province).trim() + "<br>Confirmed " + item.confirmed + "<br>Deaths: " + item.deaths + "<br>Recovered: " + item.recoverd
+      text: `${(item.country + " " + item.province).trim()}<br>Confirmed ${item.confirmed}<br>Deaths: ${item.deaths}<br>Recovered: ${item.recoverd}`
     })) : []
 
   return (

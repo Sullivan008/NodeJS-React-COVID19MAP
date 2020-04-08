@@ -30,5 +30,5 @@ app.get('/update-covid-data', async (req, res) => {
 });
 
 app.listen(port, () => {
-    console.log('Server is listening on port: ' + port);
+    console.log(`Server is listening on port: ${port}`);
 });
