@@ -28,7 +28,7 @@ const CovidMap = props => {
                                                     lat: parseFloat(place.latitude),
                                                     lng: parseFloat(place.longitude) 
                                                 }}
-                                radius = {place.circle.radius}
+                                radius = {place.circle.radius * covidMapZoomLevel * 1128.497220}
                                 options = {place.circle.options}/> 
                     }
             </Fragment>

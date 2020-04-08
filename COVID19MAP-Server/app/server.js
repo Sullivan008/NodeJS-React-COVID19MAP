@@ -2,8 +2,8 @@ const express = require('express');
 const cors = require('cors');
 
 const {
-    getJsonDataByCountriesSummarizeFromFile,
-    updateCovidDataByCountriesSummarize
+    getCovidDataFromJsonFile,
+    updateCovidData
 } = require('./data-management');
 
 const app = express();
@@ -15,14 +15,14 @@ app.get('/', (req, res) => {
     res.send('Hello World');
 });
 
-app.get('/get-covid-data-by-countries-summarize', async (req, res) => {
-    const covidDataByCountriesSummarize = await getJsonDataByCountriesSummarizeFromFile();
+app.get('/get-covid-data', async (req, res) => {
+    const jsonCovidData = await getCovidDataFromJsonFile();
 
-    res.json(covidDataByCountriesSummarize);
+    res.json(jsonCovidData);
 });
 
-app.get('/update-covid-data-by-countries-summarize', async (req, res) => {
-    await updateCovidDataByCountriesSummarize();
+app.get('/update-covid-data', async (req, res) => {
+    await updateCovidData();
 
     res.json({
         success: true

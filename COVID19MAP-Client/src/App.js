@@ -1,64 +1,39 @@
 import React, { useState, useEffect } from 'react';
 import './App.css';
-import { covidDataByCountriesSummarizeJson } from './api';
+import { getJsonCovidData } from './api';
 
 import CovidMap from './core/map/CovidMap';
-import Geocode from 'react-geocode';
-
-Geocode.setApiKey("YOUR_GOOGLE_API_KEY");
-Geocode.setLanguage("en");
-Geocode.setRegion("us");
 
 function App() {
-  const [covidDataByCountriesSummarize, setData] = useState(null);
-
-  const coordinatesCache = JSON.parse(window.localStorage.getItem('coordinatesCache') || '{}');
+  const [jsonCovidData, setData] = useState(null);
   
   useEffect(() => {
-    covidDataByCountriesSummarizeJson().then(covidDataByCountriesSummarize => {
-      delete covidDataByCountriesSummarize['World'];
-
-      const promises = Object.values(covidDataByCountriesSummarize).map(({location}) => {
-        if(coordinatesCache[location]) {
-          return covidDataByCountriesSummarize[location].coordinates = coordinatesCache[location];
-        }
-          
-        return Geocode.fromAddress(location).then(response => {
-          const {lat, lng} = response.results[0].geometry.location;
-
-          covidDataByCountriesSummarize[location].coordinates = {lat, lng};
-
-          coordinatesCache[location] = {lat, lng};
-
-          window.localStorage.setItem('coordinatesCache', JSON.stringify(coordinatesCache));
-        });
-      });
-
-      Promise.all(promises).then(() => {
-        setData(covidDataByCountriesSummarize);
-      });
+    getJsonCovidData().then(jsonCovidData => {
+      setData(jsonCovidData);
     })
   }, []);
 
-  const places = covidDataByCountriesSummarize ? 
-    Object.values(covidDataByCountriesSummarize).map(item => ({
-      id: item.location,
-      name: item.location,
-      latitude: item.coordinates.lat,
-      longitude: item.coordinates.lng,
+  const totalConfirmed = jsonCovidData ? Math.max(...Object.values(jsonCovidData).map(item => item.confirmed)) : 1;
+
+  const places = jsonCovidData ? 
+    Object.values(jsonCovidData).map(item => ({
+      id: item.id,
+      name: item.id,
+      latitude: parseInt(item.latitude),
+      longitude: parseInt(item.longitude),
       circle: {
-        radius: 3000,
+        radius: (item.confirmed / totalConfirmed) * 1000,
         options: {
           strokeColor: "#ff0000"
         }},
-      text: item.location + " | Total cases: " + item.totalCases + " | Total death: " + item.totalDeaths
+      text: item.id + ": Confirmed " + item.confirmed + " | Deaths: " + item.deaths + " | Recovered: " + item.recoverd
     })) : []
 
   return (
     <div className="App">
       <CovidMap
         center = {{lat: 40.64, lng: -73.96}}
-        zoom = {12}
+        zoom = {1}
         places = {places}
         googleMapURL = "https://maps.googleapis.com/maps/api/js?key=YOUR_GOOGLE_API_KEY"
         loadingElement = {<div style = {{height: '100%'}} />}
