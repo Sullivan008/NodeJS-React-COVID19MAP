@@ -7,6 +7,8 @@ const CovidMap = props => {
     const covidMapRef = useRef(null);
     const [covidMapZoomLevel, setZoomLevel] = useState(props.zoom);
 
+    const canShowCovidMapCircleLabel = covidMapZoomLevel => covidMapZoomLevel > 5;
+
     const handleZoomChanged = useCallback(() => {
         setZoomLevel(covidMapRef.current.getZoom());
     }, [covidMapRef]);
@@ -14,32 +16,35 @@ const CovidMap = props => {
     const places = props.places.map(place => { 
         return (
             <Fragment key = {place.id}>
-                <MarkerWithLabel position = {{ 
-                                                lat: parseFloat(place.latitude),
-                                                lng: parseFloat(place.longitude)
-                                            }}
-                                 labelAnchor = { new google.maps.Point(0,0) }
-                                 labelStyle = {{
-                                    background: "black",
-                                    color: "white",
-                                    textAlign: "center",
-                                    fontSize: "11px",
-                                    padding: "2px",
-                                    opacity: "0.5",
-                                    transform: 'translateX(-50%) translateY(16px)'
-                                }}
-                >
-                    <div dangerouslySetInnerHTML = {{__html: place.text}}/>
-                </MarkerWithLabel>
-                    { 
-                        place.circle && 
-                        <Circle defaultCenter = {{
+                {canShowCovidMapCircleLabel(covidMapZoomLevel) ? 
+                    <MarkerWithLabel position = {{ 
                                                     lat: parseFloat(place.latitude),
-                                                    lng: parseFloat(place.longitude) 
+                                                    lng: parseFloat(place.longitude)
                                                 }}
-                                radius = {place.circle.radius * covidMapZoomLevel * 1128.497220}
-                                options = {place.circle.options}/> 
-                    }
+                                    labelAnchor = { new google.maps.Point(0,0) }
+                                    labelStyle = {{
+                                        background: "black",
+                                        color: "white",
+                                        textAlign: "center",
+                                        fontSize: "11px",
+                                        padding: "2px",
+                                        opacity: "0.5",
+                                        transform: 'translateX(-50%) translateY(16px)'
+                                    }}
+                    >
+                        <div dangerouslySetInnerHTML = {{__html: place.text}}/>
+                    </MarkerWithLabel> : ""
+                };
+
+                { 
+                    place.circle && 
+                    <Circle defaultCenter = {{
+                                                lat: parseFloat(place.latitude),
+                                                lng: parseFloat(place.longitude) 
+                                            }}
+                            radius = {place.circle.radius * covidMapZoomLevel * 1128.497220}
+                            options = {place.circle.options}/> 
+                };
             </Fragment>
         )});
 
