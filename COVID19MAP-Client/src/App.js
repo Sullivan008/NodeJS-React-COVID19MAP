@@ -4,6 +4,13 @@ import { getJsonCovidData } from './api';
 
 import CovidMap from './core/map/CovidMap';
 
+const Panel = ({title, children}) => (
+  <div className="Panel">
+    <div className="Panel-Title">{title}</div>
+    {children}
+  </div>
+);
+
 function App() {
   const [jsonCovidData, setData] = useState(null);
   
@@ -36,21 +43,32 @@ function App() {
           strokeColor: "#ff0000"
         }},
       text: `${(item.country + " " + item.province).trim()}<br>Confirmed ${item.confirmed}<br>Deaths: ${item.deaths}<br>Recovered: ${item.recoverd}`
-    })) : []
+    })) : [];
 
   return (
     <div className="App">
-      <CovidMap
-        center = {{lat: 40.64, lng: -73.96}}
-        zoom = {1}
-        places = {places}
-        googleMapURL = "https://maps.googleapis.com/maps/api/js?key=YOUR_GOOGLE_API_KEY"
-        loadingElement = {<div style = {{height: '100%'}} />}
-        containerElement = {<div style = {{height: '100vh'}}/>}
-        mapElement = {<div style = {{height: '100%'}}/>}
-      />
+      <div className="Column Column-Left">
+        <Panel title="Total Confirmed"/>
+        <Panel title="Confirmed Cases"/>
+      </div>
+
+      <div className="Column Column-Map">
+        <CovidMap
+          center = {{lat: 40.64, lng: -73.96}}
+          zoom = {1}
+          places = {places}
+          googleMapURL = "https://maps.googleapis.com/maps/api/js?key=YOUR_GOOGLE_API_KEY"
+          loadingElement = {<div style = {{height: `100%`}} />}
+          containerElement = {<div style = {{height: `100vh`}}/>}
+          mapElement = {<div style = {{height: `100%`}}/>}
+        />
+      </div>
+
+      <div className="Column Column-Right">
+        Column 2
+      </div>
     </div>
-  );
+  )
 }
 
 export default App;

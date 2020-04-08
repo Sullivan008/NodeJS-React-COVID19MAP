@@ -44,7 +44,7 @@ const CovidMap = props => {
                     >
                         <div dangerouslySetInnerHTML = {{__html: place.text}}/>
                     </MarkerWithLabel> : ""
-                };
+                }
 
                 { 
                     place.circle && 
@@ -54,7 +54,7 @@ const CovidMap = props => {
                                             }}
                             radius = {place.circle.radius * covidMapZoomLevel * 1128.497220}
                             options = {place.circle.options}/> 
-                };
+                }
             </Fragment>
         )});
 
@@ -64,7 +64,7 @@ const CovidMap = props => {
                    onZoomChanged = {handleZoomChanged}
                    onDragEnd = {handleOnDragEnd}
                    ref = {covidMapRef}>
-            {covidMapPlaces};
+            {covidMapPlaces}
         </GoogleMap>
     );
 };
