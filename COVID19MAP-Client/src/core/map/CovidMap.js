@@ -1,4 +1,5 @@
 
+/* global google */
 import React, { Fragment, useCallback, useRef, useState } from "react";
 import { withGoogleMap, GoogleMap, withScriptjs, Circle } from "react-google-maps";
 import { MarkerWithLabel } from "react-google-maps/lib/components/addons/MarkerWithLabel";
@@ -31,6 +32,7 @@ const CovidMap = props => {
                                                     lat: parseFloat(place.latitude),
                                                     lng: parseFloat(place.longitude)
                                                 }}
+                                     labelAnchor = { new google.maps.Point(0,0) }
                                      labelStyle = {labelStyle}
                     >
                         <div dangerouslySetInnerHTML = {{__html: place.text}}/>
