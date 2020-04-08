@@ -1,12 +1,21 @@
 /* global google */
-import React, { Fragment } from "react";
+import React, { Fragment, useCallback, useRef, useState } from "react";
 import { withGoogleMap, GoogleMap, withScriptjs, Circle } from "react-google-maps";
 import { MarkerWithLabel } from "react-google-maps/lib/components/addons/MarkerWithLabel";
 
-const Map = props => {
+const CovidMap = props => {
+    const covidMapRef = useRef(null);
+    const [covidMapZoomLevel, setZoomLevel] = useState(props.zoom);
+
+    const handleZoomChanged = useCallback(() => {
+        setZoomLevel(covidMapRef.current.getZoom());
+    });
+
     return(
         <GoogleMap defaultZoom = {props.zoom}
-                   defaultCenter = {props.center}>
+                   defaultCenter = {props.center}
+                   onZoomChanged = {handleZoomChanged}
+                   ref = {covidMapRef}>
                 { props.places.map(place => { return (
                     <Fragment key = {place.id}>
                         <MarkerWithLabel position = {{ lat: parseFloat(place.latitude),
@@ -25,4 +34,4 @@ const Map = props => {
     );
 };
 
-export default withScriptjs(withGoogleMap(Map));
+export default withScriptjs(withGoogleMap(CovidMap));
