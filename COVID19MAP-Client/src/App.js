@@ -26,7 +26,7 @@ function App() {
         options: {
           strokeColor: "#ff0000"
         }},
-      text: item.id + ": Confirmed " + item.confirmed + " | Deaths: " + item.deaths + " | Recovered: " + item.recoverd
+      text: item.id + "<br>Confirmed " + item.confirmed + "<br>Deaths: " + item.deaths + "<br>Recovered: " + item.recoverd
     })) : []
 
   return (

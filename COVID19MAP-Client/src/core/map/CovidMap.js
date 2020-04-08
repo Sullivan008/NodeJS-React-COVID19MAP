@@ -19,8 +19,8 @@ const CovidMap = props => {
                                                 lng: parseFloat(place.longitude)
                                             }}
                                  labelAnchor = { new google.maps.Point(0,0) }
-                                 labelStyle = { {background: "black", color: "white", fontSize: "11px", padding: "2px", opacity: "0.5"} }>
-                    <span>{place.text}</span>
+                                 labelStyle = { {background: "black", color: "white", textAlign: "center", fontSize: "11px", padding: "2px", opacity: "0.5"} }>
+                    <div dangerouslySetInnerHTML = {{__html: place.text}}/>
                 </MarkerWithLabel>
                     { 
                         place.circle && 
