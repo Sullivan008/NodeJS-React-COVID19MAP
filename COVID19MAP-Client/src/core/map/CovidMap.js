@@ -17,17 +17,24 @@ const labelStyle = {
 const CovidMap = props => {
     const covidMapRef = useRef(null);
     const [covidMapZoomLevel, setZoomLevel] = useState(props.zoom);
+    const [covidMapBounds, setBounds] = useState(null);
 
-    const canShowCovidMapCircleLabel = covidMapZoomLevel => covidMapZoomLevel > 5;
+    const canShowCovidMapCircleLabel = covidMapZoomLevel => covidMapZoomLevel > 4;
 
     const handleZoomChanged = useCallback(() => {
         setZoomLevel(covidMapRef.current.getZoom());
+        setBounds(covidMapRef.current.getBounds());
     }, [covidMapRef]);
 
-    const places = props.places.map(place => { 
+    const handleOnDragEnd = useCallback(() => {
+        setBounds(covidMapRef.current.getBounds());
+    }, [covidMapRef]);
+
+    const covidMapPlaces = props.places.map(place => { 
         return (
             <Fragment key = {place.id}>
-                {canShowCovidMapCircleLabel(covidMapZoomLevel) ? 
+                {canShowCovidMapCircleLabel(covidMapZoomLevel) && 
+                 covidMapBounds && covidMapBounds.contains(new google.maps.LatLng(parseFloat(place.latitude), parseFloat(place.longitude))) ? 
                     <MarkerWithLabel position = {{ 
                                                     lat: parseFloat(place.latitude),
                                                     lng: parseFloat(place.longitude)
@@ -55,8 +62,9 @@ const CovidMap = props => {
         <GoogleMap defaultZoom = {props.zoom}
                    defaultCenter = {props.center}
                    onZoomChanged = {handleZoomChanged}
+                   onDragEnd = {handleOnDragEnd}
                    ref = {covidMapRef}>
-            {places};
+            {covidMapPlaces};
         </GoogleMap>
     );
 };
