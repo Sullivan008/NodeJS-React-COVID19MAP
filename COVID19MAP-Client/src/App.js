@@ -10,7 +10,9 @@ const Panel = ({title, children}) => (
   <div className="Panel">
     <div className="Panel-Title">{title}</div>
     <div className="Panel-Scroller">
-      <div className="Panel-Body">{children}</div>
+      <div className="Panel-Body">
+        {children}
+      </div>
     </div>
   </div>
 );
@@ -66,8 +68,6 @@ function App() {
       .map(item => item.confirmed)
       .reduce((accumlator, value) => accumlator + value, 0);
 
-  console.log(jsonCovidData);
-
   const totalDeaths = jsonCovidData && 
     Object.values(jsonCovidData)
       .map(item => item.deaths)
@@ -87,9 +87,17 @@ function App() {
 
         <Panel title="Confirmed Cases">
           <List>
-            {jsonCovidData && Object.values(jsonCovidData).map(({country, province, confirmed}) => (
-              <List.Item>{numberFormat.format(confirmed)} {formatPlaceName({country, province})}</List.Item>
-            ))}
+            {
+              jsonCovidData && 
+              Object.values(jsonCovidData)
+                .filter(({confirmed}) => confirmed > 0)
+                .sort(({confirmed: aConfirmed}, {confirmed: bConfirmed}) => bConfirmed - aConfirmed)  
+                .map(({country, province, confirmed}) => (
+                  <List.Item>
+                    {numberFormat.format(confirmed)} {formatPlaceName({country, province})}
+                  </List.Item>
+              ))
+            }
           </List>
         </Panel>
       </div>
@@ -111,18 +119,34 @@ function App() {
           {totalDeaths} Deaths
 
           <List>
-            {jsonCovidData && Object.values(jsonCovidData).map(({country, province, deaths}) => (
-              <List.Item>{numberFormat.format(deaths)} deaths<br /> {formatPlaceName({country, province})}</List.Item>
-            ))}
+            {
+              jsonCovidData &&
+              Object.values(jsonCovidData)
+                .filter(({deaths}) => deaths > 0)
+                .sort(({deaths: aDeaths}, {deaths: bDeaths}) => bDeaths - aDeaths)  
+                .map(({country, province, deaths}) => (
+                  <List.Item>
+                    {numberFormat.format(deaths)} deaths<br /> {formatPlaceName({country, province})}
+                  </List.Item>
+                ))
+            }
           </List>
         </Panel>
         <Panel title="Total Recovered">
           {totalRecovered} Recovered
 
           <List>
-            {jsonCovidData && Object.values(jsonCovidData).map(({country, province, recovered}) => (
-              <List.Item>{numberFormat.format(recovered)} recoverd<br /> {formatPlaceName({country, province})}</List.Item>
-            ))}
+            {
+              jsonCovidData &&
+              Object.values(jsonCovidData)
+                .filter(({recovered}) => recovered > 0)
+                .sort(({recovered: aRecovered}, {recovered: bRecovered}) => bRecovered - aRecovered)  
+                .map(({country, province, recovered}) => (
+                  <List.Item>
+                    {numberFormat.format(recovered)} recoverd<br /> {formatPlaceName({country, province})}
+                  </List.Item>
+                ))
+            }
           </List>
         </Panel>
       </div>
