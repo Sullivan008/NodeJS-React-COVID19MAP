@@ -27,8 +27,18 @@ List.Item = ({children}) => (
 );
 
 const formatPlaceName = ({province, country}) => 
-  province === country ? country : (province + " " + country).trim()
+  province === country ? country : (province + " " + country).trim();
 
+const calculateRadius = (confirmed, maxConfirmed) => {
+
+  const min = 30;
+  const max = 300;
+
+  const radius = (confirmed / maxConfirmed) * max;
+
+  return radius < min ? min : radius;
+};
+  
 function App() {
   const [jsonCovidData, setData] = useState(null);
   
@@ -43,25 +53,17 @@ function App() {
   };
   
   const covidDataObject = Object.values(jsonCovidData);
+  const maxConfirmed = Math.max(...covidDataObject.map(item => item.confirmed));
 
-  const calculateRadius = (calculatingItem) => {
-    const totalConfirmed = Math.max(...covidDataObject.map(item => item.confirmed));
 
-    const min = 50;
-    const max = 500;
-
-    const radius = (calculatingItem.confirmed / totalConfirmed) * max;
-
-    return radius < min ? min : radius;
-  };
 
   const places = covidDataObject.map(({id, name, latitude, longitude, country, province, confirmed, deaths, recovered}) => ({
     id: id,
     name: id,
-    latitude: latitude,
-    longitude: longitude,
+    latitude,
+    longitude,
     circle: {
-      radius: calculateRadius({confirmed}),
+      radius: calculateRadius(confirmed, maxConfirmed),
         options: {
         strokeColor: "#ff0000"
       }},
