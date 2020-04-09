@@ -6,9 +6,10 @@ import CovidMap from './core/map/CovidMap';
 
 const numberFormat = new Intl.NumberFormat();
 
-const Panel = ({title, children}) => (
+const Panel = ({title, subtitle, children}) => (
   <div className="Panel">
     <div className="Panel-Title">{title}</div>
+    <div className="Panel-SubTitle">{subtitle}</div>
     <div className="Panel-Scroller">
       <div className="Panel-Body">
         {children}
@@ -94,9 +95,7 @@ function App() {
   return (
     <div className="App">
       <div className="Column Column-Left">
-        <Panel title="Total Confirmed">
-          {totalConfirmed || 0}
-        </Panel>
+        <Panel title="Total Confirmed" subtitle={totalConfirmed}/>
 
         <Panel title="Confirmed Cases">
           <List>
@@ -124,9 +123,7 @@ function App() {
       </div>
 
       <div className="Column Column-Right">
-        <Panel title="Total Deaths">
-          {totalDeaths} Deaths
-
+        <Panel title="Total Deaths" subtitle={totalDeaths}>
           <List>
             {
               deathRows.map(({country, province, deaths}) => (
@@ -137,9 +134,7 @@ function App() {
             }
           </List>
         </Panel>
-        <Panel title="Total Recovered">
-          {totalRecovered} Recovered
-
+        <Panel title="Total Recovered" subtitle={totalRecovered}>
           <List>
             {
               recoveredRows.map(({country, province, recovered}) => (
