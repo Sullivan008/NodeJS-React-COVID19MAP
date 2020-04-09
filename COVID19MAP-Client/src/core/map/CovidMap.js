@@ -14,6 +14,9 @@ const labelStyle = {
     transform: 'translateX(-50%) translateY(16px)'
 };
 
+const pointIsVisible = (covidMapBounds, {latitude, longitude}) => 
+    covidMapBounds.contains(new google.maps.LatLng(latitude, longitude));
+
 const CovidMap = props => {
     const covidMapRef = useRef(null);
     const [covidMapZoomLevel, setZoomLevel] = useState(props.zoom);
@@ -30,30 +33,30 @@ const CovidMap = props => {
         setBounds(covidMapRef.current.getBounds());
     }, [covidMapRef]);
 
-    const covidMapPlaces = props.places.map(place => { 
+    const covidMapPlaces = props.places.map(({id, latitude, longitude, text, circle}) => { 
         return (
-            <Fragment key = {place.id}>
+            <Fragment key = {id}>
                 {canShowCovidMapCircleLabel(covidMapZoomLevel) && 
-                 covidMapBounds && covidMapBounds.contains(new google.maps.LatLng(place.latitude, place.longitude)) ? 
+                  pointIsVisible(covidMapBounds, {latitude, longitude}) ? 
                     <MarkerWithLabel position = {{ 
-                                                    lat: place.latitude,
-                                                    lng: place.longitude
+                                                    lat: latitude,
+                                                    lng: longitude
                                                 }}
                                      labelAnchor = { new google.maps.Point(0,0) }
                                      labelStyle = {labelStyle}
                     >
-                        <div dangerouslySetInnerHTML = {{__html: place.text}}/>
+                        <div dangerouslySetInnerHTML = {{__html: text}}/>
                     </MarkerWithLabel> : ""
                 }
 
                 { 
-                    place.circle && 
+                    circle && 
                     <Circle defaultCenter = {{
-                                                lat: place.latitude,
-                                                lng: place.longitude
+                                                lat: latitude,
+                                                lng: longitude
                                             }}
-                            radius = {place.circle.radius * covidMapZoomLevel * 1128.497220}
-                            options = {place.circle.options}/> 
+                            radius = {circle.radius * covidMapZoomLevel * 1128.497220}
+                            options = {circle.options}/> 
                 }
             </Fragment>
         )});
