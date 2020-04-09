@@ -41,8 +41,10 @@ function App() {
     return <div>Loading...</div>
   };
   
+  const covidDataObject = Object.values(jsonCovidData);
+
   const calculateRadius = (calculatingItem) => {
-    const totalConfirmed = jsonCovidData ? Math.max(...Object.values(jsonCovidData).map(item => item.confirmed)) : 1;
+    const totalConfirmed = Math.max(...covidDataObject.map(item => item.confirmed));
 
     const min = 50;
     const max = 500;
@@ -52,34 +54,42 @@ function App() {
     return radius < min ? min : radius;
   };
 
-  const places = jsonCovidData ? 
-    Object.values(jsonCovidData).map(item => ({
-      id: item.id,
-      name: item.id,
-      latitude: item.latitude,
-      longitude: item.longitude,
-      circle: {
-        radius: calculateRadius(item),
+  const places = covidDataObject.map(({id, name, latitude, longitude, country, province, confirmed, deaths, recovered}) => ({
+    id: id,
+    name: id,
+    latitude: latitude,
+    longitude: longitude,
+    circle: {
+      radius: calculateRadius({confirmed}),
         options: {
-          strokeColor: "#ff0000"
-        }},
-      text: `${formatPlaceName(item)}<br>Confirmed ${item.confirmed}<br>Deaths: ${item.deaths}<br>Recovered: ${item.recovered}`
-    })) : [];
+        strokeColor: "#ff0000"
+      }},
+    text: `${formatPlaceName({country, province})}<br>Confirmed ${confirmed}<br>Deaths: ${deaths}<br>Recovered: ${recovered}`
+  }));
 
-  const totalConfirmed = jsonCovidData && 
-    Object.values(jsonCovidData)
-      .map(item => item.confirmed)
-      .reduce((accumlator, value) => accumlator + value, 0);
+  const totalConfirmed = covidDataObject
+    .map(item => item.confirmed)
+    .reduce((accumlator, value) => accumlator + value, 0);
 
-  const totalDeaths = jsonCovidData && 
-    Object.values(jsonCovidData)
-      .map(item => item.deaths)
-      .reduce((accumlator, value) => accumlator + value, 0);
+  const confirmedRows = covidDataObject
+    .filter(({confirmed}) => confirmed > 0)
+    .sort(({confirmed: aConfirmed}, {confirmed: bConfirmed}) => bConfirmed - aConfirmed)
 
-  const totalRecovered = jsonCovidData && 
-    Object.values(jsonCovidData)
-      .map(item => item.recovered)
-      .reduce((accumlator, value) => accumlator + value, 0);
+  const totalDeaths = covidDataObject
+    .map(item => item.deaths)
+    .reduce((accumlator, value) => accumlator + value, 0);
+
+  const deathRows = covidDataObject
+    .filter(({deaths}) => deaths > 0)
+    .sort(({deaths: aDeaths}, {deaths: bDeaths}) => bDeaths - aDeaths);
+
+  const totalRecovered = covidDataObject
+    .map(item => item.recovered)
+    .reduce((accumlator, value) => accumlator + value, 0);
+
+  const recoveredRows = covidDataObject
+    .filter(({recovered}) => recovered > 0)
+    .sort(({recovered: aRecovered}, {recovered: bRecovered}) => bRecovered - aRecovered)
 
   return (
     <div className="App">
@@ -91,14 +101,10 @@ function App() {
         <Panel title="Confirmed Cases">
           <List>
             {
-              jsonCovidData && 
-              Object.values(jsonCovidData)
-                .filter(({confirmed}) => confirmed > 0)
-                .sort(({confirmed: aConfirmed}, {confirmed: bConfirmed}) => bConfirmed - aConfirmed)  
-                .map(({country, province, confirmed}) => (
-                  <List.Item>
-                    {numberFormat.format(confirmed)} {formatPlaceName({country, province})}
-                  </List.Item>
+              confirmedRows.map(({country, province, confirmed}) => (
+                <List.Item>
+                  {numberFormat.format(confirmed)} {formatPlaceName({country, province})}
+                </List.Item>
               ))
             }
           </List>
@@ -123,15 +129,11 @@ function App() {
 
           <List>
             {
-              jsonCovidData &&
-              Object.values(jsonCovidData)
-                .filter(({deaths}) => deaths > 0)
-                .sort(({deaths: aDeaths}, {deaths: bDeaths}) => bDeaths - aDeaths)  
-                .map(({country, province, deaths}) => (
-                  <List.Item>
-                    {numberFormat.format(deaths)} deaths<br /> {formatPlaceName({country, province})}
-                  </List.Item>
-                ))
+              deathRows.map(({country, province, deaths}) => (
+                <List.Item>
+                  {numberFormat.format(deaths)} deaths<br /> {formatPlaceName({country, province})}
+                </List.Item>
+              ))
             }
           </List>
         </Panel>
@@ -140,15 +142,11 @@ function App() {
 
           <List>
             {
-              jsonCovidData &&
-              Object.values(jsonCovidData)
-                .filter(({recovered}) => recovered > 0)
-                .sort(({recovered: aRecovered}, {recovered: bRecovered}) => bRecovered - aRecovered)  
-                .map(({country, province, recovered}) => (
-                  <List.Item>
-                    {numberFormat.format(recovered)} recoverd<br /> {formatPlaceName({country, province})}
-                  </List.Item>
-                ))
+              recoveredRows.map(({country, province, recovered}) => (
+                <List.Item>
+                  {numberFormat.format(recovered)} recoverd<br /> {formatPlaceName({country, province})}
+                </List.Item>
+              ))
             }
           </List>
         </Panel>
