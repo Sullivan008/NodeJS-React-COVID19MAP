@@ -9,7 +9,9 @@ const numberFormat = new Intl.NumberFormat();
 const Panel = ({title, children}) => (
   <div className="Panel">
     <div className="Panel-Title">{title}</div>
-    {children}
+    <div className="Panel-Scroller">
+      <div className="Panel-Body">{children}</div>
+    </div>
   </div>
 );
 
