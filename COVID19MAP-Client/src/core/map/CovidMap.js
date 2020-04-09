@@ -34,10 +34,10 @@ const CovidMap = props => {
         return (
             <Fragment key = {place.id}>
                 {canShowCovidMapCircleLabel(covidMapZoomLevel) && 
-                 covidMapBounds && covidMapBounds.contains(new google.maps.LatLng(parseFloat(place.latitude), parseFloat(place.longitude))) ? 
+                 covidMapBounds && covidMapBounds.contains(new google.maps.LatLng(place.latitude, place.longitude)) ? 
                     <MarkerWithLabel position = {{ 
-                                                    lat: parseFloat(place.latitude),
-                                                    lng: parseFloat(place.longitude)
+                                                    lat: place.latitude,
+                                                    lng: place.longitude
                                                 }}
                                      labelAnchor = { new google.maps.Point(0,0) }
                                      labelStyle = {labelStyle}
@@ -49,8 +49,8 @@ const CovidMap = props => {
                 { 
                     place.circle && 
                     <Circle defaultCenter = {{
-                                                lat: parseFloat(place.latitude),
-                                                lng: parseFloat(place.longitude) 
+                                                lat: place.latitude,
+                                                lng: place.longitude
                                             }}
                             radius = {place.circle.radius * covidMapZoomLevel * 1128.497220}
                             options = {place.circle.options}/> 

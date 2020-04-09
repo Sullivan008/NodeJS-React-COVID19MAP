@@ -35,8 +35,8 @@ function App() {
     Object.values(jsonCovidData).map(item => ({
       id: item.id,
       name: item.id,
-      latitude: parseInt(item.latitude),
-      longitude: parseInt(item.longitude),
+      latitude: item.latitude,
+      longitude: item.longitude,
       circle: {
         radius: calculateRadius(item),
         options: {
