@@ -21,6 +21,9 @@ List.Item = ({children}) => (
   <div className="List-Item">{children}</div>
 );
 
+const formatPlaceName = ({province, country}) => 
+  province === country ? country : (province + " " + country).trim()
+
 function App() {
   const [jsonCovidData, setData] = useState(null);
   
@@ -53,12 +56,24 @@ function App() {
         options: {
           strokeColor: "#ff0000"
         }},
-      text: `${(item.country + " " + item.province).trim()}<br>Confirmed ${item.confirmed}<br>Deaths: ${item.deaths}<br>Recovered: ${item.recoverd}`
+      text: `${formatPlaceName(item)}<br>Confirmed ${item.confirmed}<br>Deaths: ${item.deaths}<br>Recovered: ${item.recovered}`
     })) : [];
 
   const totalConfirmed = jsonCovidData && 
     Object.values(jsonCovidData)
       .map(item => item.confirmed)
+      .reduce((accumlator, value) => accumlator + value, 0);
+
+  console.log(jsonCovidData);
+
+  const totalDeaths = jsonCovidData && 
+    Object.values(jsonCovidData)
+      .map(item => item.deaths)
+      .reduce((accumlator, value) => accumlator + value, 0);
+
+  const totalRecovered = jsonCovidData && 
+    Object.values(jsonCovidData)
+      .map(item => item.recovered)
       .reduce((accumlator, value) => accumlator + value, 0);
 
   return (
@@ -71,7 +86,7 @@ function App() {
         <Panel title="Confirmed Cases">
           <List>
             {jsonCovidData && Object.values(jsonCovidData).map(({country, province, confirmed}) => (
-              <List.Item>{numberFormat.format(confirmed)} {province || country}</List.Item>
+              <List.Item>{numberFormat.format(confirmed)} {formatPlaceName({country, province})}</List.Item>
             ))}
           </List>
         </Panel>
@@ -90,7 +105,24 @@ function App() {
       </div>
 
       <div className="Column Column-Right">
-        Column 2
+        <Panel title="Total Deaths">
+          {totalDeaths} Deaths
+
+          <List>
+            {jsonCovidData && Object.values(jsonCovidData).map(({country, province, deaths}) => (
+              <List.Item>{numberFormat.format(deaths)} deaths<br /> {formatPlaceName({country, province})}</List.Item>
+            ))}
+          </List>
+        </Panel>
+        <Panel title="Total Recovered">
+          {totalRecovered} Recovered
+
+          <List>
+            {jsonCovidData && Object.values(jsonCovidData).map(({country, province, recovered}) => (
+              <List.Item>{numberFormat.format(recovered)} recoverd<br /> {formatPlaceName({country, province})}</List.Item>
+            ))}
+          </List>
+        </Panel>
       </div>
     </div>
   )

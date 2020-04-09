@@ -34,7 +34,7 @@ async function convertingCovidDataToJsonFromArrayData(arrayData) {
             lastUpdate,
             confirmed,
             deaths,
-            recoverd,
+            recovered,
             latitude,
             longitude
         ], index) => {
@@ -51,7 +51,7 @@ async function convertingCovidDataToJsonFromArrayData(arrayData) {
                 lastUpdate,
                 confirmed: parseInt(confirmed),
                 deaths: parseInt(deaths),
-                recoverd: parseInt(recoverd),
+                recovered: parseInt(recovered),
                 latitude: parseFloat(latitude),
                 longitude: parseFloat(longitude)
         }
