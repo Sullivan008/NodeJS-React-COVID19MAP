@@ -9,6 +9,11 @@ body,
   display: flex;
 }
 
+.Column {
+  display: flex;
+  flex-direction: column;
+}
+
 .Column-Left {
   padding: 16px;
   width: 25%;
@@ -26,6 +31,8 @@ body,
 .Panel {
   border: 1px solid #ddd;
   padding: 8px 16px;
+  overflow: auto;
+  flex: 1 0;
 }
 
 .Panel+.Panel {
@@ -36,4 +43,16 @@ body,
   font-size: 32px;
   text-align: center;
   margin-bottom: 16px;
+}
+
+.List{
+
+}
+
+.List-Item {
+  padding: 8px 0;
+}
+
+.List-Item+ .List-Item {
+  border-top: 1px solid #ddd;
 }

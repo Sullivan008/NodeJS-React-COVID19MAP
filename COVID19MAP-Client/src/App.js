@@ -4,11 +4,21 @@ import { getJsonCovidData } from './api';
 
 import CovidMap from './core/map/CovidMap';
 
+const numberFormat = new Intl.NumberFormat();
+
 const Panel = ({title, children}) => (
   <div className="Panel">
     <div className="Panel-Title">{title}</div>
     {children}
   </div>
+);
+
+const List = ({children}) => (
+  <div className="List">{children}</div>
+);
+
+List.Item = ({children}) => (
+  <div className="List-Item">{children}</div>
 );
 
 function App() {
@@ -20,9 +30,10 @@ function App() {
     })
   }, []);
 
-  const totalConfirmed = jsonCovidData ? Math.max(...Object.values(jsonCovidData).map(item => item.confirmed)) : 1;
-
+  
   const calculateRadius = (calculatingItem) => {
+    const totalConfirmed = jsonCovidData ? Math.max(...Object.values(jsonCovidData).map(item => item.confirmed)) : 1;
+
     const min = 50;
     const max = 500;
 
@@ -45,11 +56,25 @@ function App() {
       text: `${(item.country + " " + item.province).trim()}<br>Confirmed ${item.confirmed}<br>Deaths: ${item.deaths}<br>Recovered: ${item.recoverd}`
     })) : [];
 
+  const totalConfirmed = jsonCovidData && 
+    Object.values(jsonCovidData)
+      .map(item => item.confirmed)
+      .reduce((accumlator, value) => accumlator + value, 0);
+
   return (
     <div className="App">
       <div className="Column Column-Left">
-        <Panel title="Total Confirmed"/>
-        <Panel title="Confirmed Cases"/>
+        <Panel title="Total Confirmed">
+          {totalConfirmed || 0}
+        </Panel>
+
+        <Panel title="Confirmed Cases">
+          <List>
+            {jsonCovidData && Object.values(jsonCovidData).map(({country, province, confirmed}) => (
+              <List.Item>{numberFormat.format(confirmed)} {province || country}</List.Item>
+            ))}
+          </List>
+        </Panel>
       </div>
 
       <div className="Column Column-Map">

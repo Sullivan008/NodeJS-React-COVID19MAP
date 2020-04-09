@@ -11,7 +11,7 @@ const csvParserAsync = promisify(csvParser);
 const writeFileAsync = promisify(fileStream.writeFile);
 const readFileAsync = promisify(fileStream.readFile);
 
-const DATA_URL = 'https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_daily_reports/03-13-2020.csv';
+const DATA_URL = 'https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_daily_reports/{date}.csv';
 const DOWNLOAD_FULL_PATH = path.join(__dirname, '..', 'downloads', 'full_data.json');
 
 async function downloadLatestCovidRawData() {
