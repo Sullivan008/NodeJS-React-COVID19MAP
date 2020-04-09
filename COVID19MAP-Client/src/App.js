@@ -94,8 +94,8 @@ function App() {
 
       <div className="Column Column-Map">
         <CovidMap
-          center = {{lat: 40.64, lng: -73.96}}
-          zoom = {1}
+          center = {{lat: 0.25, lng: 26.85}}
+          zoom = {2}
           places = {places}
           googleMapURL = "https://maps.googleapis.com/maps/api/js?key=YOUR_GOOGLE_API_KEY"
           loadingElement = {<div style = {{height: `100%`}} />}
