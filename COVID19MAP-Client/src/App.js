@@ -4,6 +4,9 @@ import { getJsonCovidData } from './api';
 
 import CovidMap from './core/map/CovidMap';
 
+const centerCoordinates = { lat: 0.25, lng: 30.85 };
+const defaultZoomValue = 2;
+
 const numberFormat = new Intl.NumberFormat();
 
 const Panel = ({title, subtitle, children}) => (
@@ -114,8 +117,8 @@ function App() {
 
       <div className="Column Column-Map">
         <CovidMap
-          center = {{lat: 0.25, lng: 26.85}}
-          zoom = {2}
+          center = {centerCoordinates}
+          zoom = {defaultZoomValue}
           places = {places}
           googleMapURL = "https://maps.googleapis.com/maps/api/js?key=YOUR_GOOGLE_API_KEY"
           loadingElement = {<div style = {{height: `100%`}} />}
