@@ -37,6 +37,9 @@ function App() {
     })
   }, []);
 
+  if(!jsonCovidData) {
+    return <div>Loading...</div>
+  };
   
   const calculateRadius = (calculatingItem) => {
     const totalConfirmed = jsonCovidData ? Math.max(...Object.values(jsonCovidData).map(item => item.confirmed)) : 1;
