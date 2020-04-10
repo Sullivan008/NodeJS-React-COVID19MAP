@@ -117,7 +117,7 @@ function App() {
         <CovidMap
           zoom = {zoom}
           places = {places}
-          googleMapURL = "https://maps.googleapis.com/maps/api/js?key=YOUR_GOOGLE_API_KEY"
+          googleMapURL = {`https://maps.googleapis.com/maps/api/js?key=${process.env.REACT_APP_GOOGLE_MAPS_API_KEY || 'YOUR_GOOGLE_API_KEY'}`}
           loadingElement = {<div style = {{height: `100%`}} />}
           containerElement = {<div style = {{height: `100vh`}}/>}
           mapElement = {<div style = {{height: `100%`}}/>}

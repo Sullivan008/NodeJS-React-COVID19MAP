@@ -27,37 +27,56 @@ async function parseCovidRawData(latestCovidRawData) {
 };
 
 async function convertingCovidDataToJsonFromArrayData(arrayData) {
-    const jsonCovidData = arrayData.reduce((
-        accumlator, [
-            province,
-            country,
-            lastUpdate,
-            confirmed,
-            deaths,
-            recovered,
-            latitude,
-            longitude
-        ], index) => {
-            if(index === 0){
+    const jsonCovidData = 
+        arrayData
+            .slice(1)
+            .reduce((
+                accumlator, [
+                    fips,
+                    admin2,
+                    province,
+                    country,
+                    lastUpdate,
+                    latitude,
+                    longitude,
+                    confirmed,
+                    deaths,
+                    recovered,
+                    active,
+                    combinedKey
+                ]
+            ) => {
+                const id = province + '-' + country;
+
+                if(!{latitude, longitude}){
+                    return;
+                }
+
+                if(accumlator[id]) {
+                    accumlator[id] = {
+                        ...accumlator[id],
+                        confirmed: accumlator[id].confirmed + parseInt(confirmed),
+                        deaths: accumlator[id].deaths + parseInt(deaths),
+                        recovered: accumlator[id].recovered + parseInt(recovered)
+                    }
+                }
+                else {
+                    accumlator[id] = {
+                        id,
+                        province,
+                        country,
+                        lastUpdate,
+                        latitude: parseFloat(latitude),
+                        longitude: parseFloat(longitude),
+                        confirmed: parseInt(confirmed),
+                        deaths: parseInt(deaths),
+                        recovered: parseInt(recovered)
+                    };
+                }
+
                 return accumlator;
-            }
-
-            const id = province + '-' + country;
-
-            accumlator[id] = {
-                id,
-                province,
-                country,
-                lastUpdate,
-                confirmed: parseInt(confirmed),
-                deaths: parseInt(deaths),
-                recovered: parseInt(recovered),
-                latitude: parseFloat(latitude),
-                longitude: parseFloat(longitude)
-        }
-
-        return accumlator;
-    }, {});
+            }, 
+        {});
 
     return jsonCovidData;
 };
