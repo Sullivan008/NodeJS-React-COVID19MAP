@@ -3,6 +3,7 @@
 import React, { Fragment, useCallback, useRef, useState } from "react";
 import { withGoogleMap, GoogleMap, withScriptjs, Circle } from "react-google-maps";
 import { MarkerWithLabel } from "react-google-maps/lib/components/addons/MarkerWithLabel";
+import './CovidMap.css';
 
 const labelStyle = {
     background: "black",

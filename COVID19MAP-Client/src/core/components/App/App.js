@@ -1,33 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import './App.css';
-import { getJsonCovidData } from './api';
+import { getJsonCovidData } from '../../api';
 
-import CovidMap from './core/map/CovidMap';
+import CovidMap from '../CovidMap/CovidMap';
+import List from '../List/List';
+import Panel from '../Panel/Panel';
+import LoadingScreen from '../LoadingScreen/LoadingScreen'
 
-const centerCoordinates = { lat: 0.25, lng: 30.85 };
+const centerCoordinates = { lat: 6.25, lng: 18.85 };
 const defaultZoomValue = 2;
 
 const numberFormat = new Intl.NumberFormat();
-
-const Panel = ({title, subtitle, children}) => (
-  <div className="Panel">
-    <div className="Panel-Title">{title}</div>
-    <div className="Panel-SubTitle">{subtitle}</div>
-    <div className="Panel-Scroller">
-      <div className="Panel-Body">
-        {children}
-      </div>
-    </div>
-  </div>
-);
-
-const List = ({children}) => (
-  <div className="List">{children}</div>
-);
-
-List.Item = ({children}) => (
-  <div className="List-Item">{children}</div>
-);
 
 const formatPlaceName = ({province, country}) => 
   province === country ? country : (province + " " + country).trim();
@@ -52,13 +35,11 @@ function App() {
   }, []);
 
   if(!jsonCovidData) {
-    return <div>Loading...</div>
+    return <LoadingScreen />
   };
   
   const covidDataObject = Object.values(jsonCovidData);
   const maxConfirmed = Math.max(...covidDataObject.map(item => item.confirmed));
-
-
 
   const places = covidDataObject.map(({id, name, latitude, longitude, country, province, confirmed, deaths, recovered}) => ({
     id: id,
@@ -100,14 +81,14 @@ function App() {
   return (
     <div className="App">
       <div className="Column Column-Left">
-        <Panel title="Total Confirmed" subtitle={totalConfirmed}/>
+        <Panel title="Total Confirmed" subtitle={numberFormat.format(totalConfirmed)} containerClass={"Panel-TotalConfirmed"} subtitleStyle={{color: '#DF0F00', fontSize: '36px', lineHeight: 1}}/>
 
         <Panel title="Confirmed Cases">
           <List>
             {
               confirmedRows.map(({country, province, confirmed}) => (
                 <List.Item>
-                  {numberFormat.format(confirmed)} {formatPlaceName({country, province})}
+                  <span style={{color: '#DF0F00', fontWeight: 'bold'}}>{numberFormat.format(confirmed)}</span> {formatPlaceName({country, province})}
                 </List.Item>
               ))
             }
@@ -128,23 +109,24 @@ function App() {
       </div>
 
       <div className="Column Column-Right">
-        <Panel title="Total Deaths" subtitle={totalDeaths}>
+        <Panel title="Total Deaths" subtitle={numberFormat.format(totalDeaths)} subtitleStyle={{color: '#DF0F00', fontSize: '36px', lineHeight: 1}}>
           <List>
             {
               deathRows.map(({country, province, deaths}) => (
                 <List.Item>
-                  {numberFormat.format(deaths)} deaths<br /> {formatPlaceName({country, province})}
+                  <span style={{color: '#DF0F00', fontWeight: 'bold'}}>{numberFormat.format(deaths)}</span> <span style={{color: '#DF0F00'}}>deaths</span><br /> {formatPlaceName({country, province})}
                 </List.Item>
               ))
             }
           </List>
         </Panel>
-        <Panel title="Total Recovered" subtitle={totalRecovered}>
+
+        <Panel title="Total Recovered" subtitle={numberFormat.format(totalRecovered)} subtitleStyle={{color: '#41A800', fontSize: '36px', lineHeight: 1}}>
           <List>
             {
               recoveredRows.map(({country, province, recovered}) => (
                 <List.Item>
-                  {numberFormat.format(recovered)} recoverd<br /> {formatPlaceName({country, province})}
+                  <span style={{color: '#41A800', fontWeight: 'bold'}}>{numberFormat.format(recovered)}</span> <span style={{color: '#41A800'}}>recoverd</span><br /> {formatPlaceName({country, province})}
                 </List.Item>
               ))
             }

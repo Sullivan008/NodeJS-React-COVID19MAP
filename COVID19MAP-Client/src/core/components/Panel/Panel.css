@@ -1,0 +1,64 @@
+.Panel {
+    border: 1px solid #ddd;
+    padding: 8px 16px;
+    flex: 1 0;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+    border-radius: 5px;
+}
+
+.Panel+.Panel {
+    margin-top: 16px;
+}
+
+.Panel.Panel-TotalConfirmed {
+    flex: 0;
+}
+
+.Panel-Title {
+    font-size: 32px;
+    text-align: center;
+}
+
+.Panel-SubTitle {
+    font-size: 24px;
+    text-align: center;
+}
+
+.Panel+.Panel-Title {
+    margin-top: 8px;
+}
+
+.Panel-Scroller {
+    margin-top: 16px;
+    position: relative;
+    flex: 1 0;
+}
+
+.Panel-Body {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+}
+
+.Panel-Body::-webkit-scrollbar {
+    width: 0.5em;
+    background-color: transparent;
+}
+
+.Panel-Body::-webkit-scrollbar-thumb {
+    border-radius: 3px;
+    background: #dfdfdf;
+
+}
+
+.Panel-Body::-webkit-scrollbar-track {
+    border-radius: 3px;
+    background-color: white;
+    -webkit-box-shadow: inset 0 0 6px rgba(150, 150, 150, 0.3);
+}

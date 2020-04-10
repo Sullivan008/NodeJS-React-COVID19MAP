@@ -1,0 +1,29 @@
+html,
+body,
+.App {
+  width: 100vw;
+  height: 100vh;
+}
+
+.App {
+  display: flex;
+}
+
+.Column {
+  display: flex;
+  flex-direction: column;
+}
+
+.Column-Left {
+  padding: 16px;
+  width: 20%;
+}
+
+.Column-Map {
+  flex: 1;
+}
+
+.Column-Right {
+  padding: 16px;
+  width: 20%;
+}
