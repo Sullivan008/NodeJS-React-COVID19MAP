@@ -1,6 +1,6 @@
 
 /* global google */
-import React, { Fragment, useCallback, useRef, useState } from "react";
+import React, { Fragment, useCallback, useRef, useState, useEffect } from "react";
 import { withGoogleMap, GoogleMap, withScriptjs, Circle } from "react-google-maps";
 import { MarkerWithLabel } from "react-google-maps/lib/components/addons/MarkerWithLabel";
 import './CovidMap.css';
@@ -18,9 +18,9 @@ const labelStyle = {
 const pointIsVisible = (covidMapBounds, {latitude, longitude}) => 
     covidMapBounds.contains(new google.maps.LatLng(latitude, longitude));
 
-const CovidMap = props => {
+const CovidMap = ({zoom, center, onMapRef, places, onCenterChanged}) => {
     const covidMapRef = useRef(null);
-    const [covidMapZoomLevel, setZoomLevel] = useState(props.zoom);
+    const [covidMapZoomLevel, setZoomLevel] = useState(zoom);
     const [covidMapBounds, setBounds] = useState(null);
 
     const canShowCovidMapCircleLabel = covidMapZoomLevel => covidMapZoomLevel > 4;
@@ -34,7 +34,20 @@ const CovidMap = props => {
         setBounds(covidMapRef.current.getBounds());
     }, [covidMapRef]);
 
-    const covidMapPlaces = props.places.map(({id, latitude, longitude, text, circle}) => { 
+    if(covidMapRef.current && covidMapBounds === null) {
+        setBounds(covidMapRef.current.getBounds());
+    }
+
+    useEffect(() => {
+        setZoomLevel(covidMapRef.current.getZoom());
+        setBounds(covidMapRef.current.getBounds());
+    }, [zoom, center])
+
+    useEffect(() => {
+        onMapRef(covidMapRef.current);
+    }, [onMapRef, covidMapRef])
+
+    const covidMapPlaces = places.map(({id, latitude, longitude, text, circle}) => { 
         return (
             <Fragment key = {id}>
                 {canShowCovidMapCircleLabel(covidMapZoomLevel) && 
@@ -63,11 +76,12 @@ const CovidMap = props => {
         )});
 
     return(
-        <GoogleMap defaultZoom = {props.zoom}
-                   defaultCenter = {props.center}
-                   onZoomChanged = {handleZoomChanged}
+        <GoogleMap onZoomChanged = {handleZoomChanged}
                    onDragEnd = {handleOnDragEnd}
-                   ref = {covidMapRef}>
+                   ref = {covidMapRef}
+                   onCenterChanged = {onCenterChanged}
+                   zoom = {zoom}
+                   center = {center}>
             {covidMapPlaces}
         </GoogleMap>
     );

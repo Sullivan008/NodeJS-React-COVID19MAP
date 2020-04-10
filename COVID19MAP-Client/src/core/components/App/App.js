@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+/* global google */
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import './App.css';
 import { getJsonCovidData } from '../../api';
 
@@ -16,7 +17,6 @@ const formatPlaceName = ({province, country}) =>
   province === country ? country : (province + " " + country).trim();
 
 const calculateRadius = (confirmed, maxConfirmed) => {
-
   const min = 30;
   const max = 300;
 
@@ -27,12 +27,29 @@ const calculateRadius = (confirmed, maxConfirmed) => {
   
 function App() {
   const [jsonCovidData, setData] = useState(null);
-  
+  const [center, setCenter] = useState(centerCoordinates);
+  const [zoom, setZoom] = useState(defaultZoomValue);
+  const covidMapRef = useRef(null);
+
   useEffect(() => {
     getJsonCovidData().then(jsonCovidData => {
       setData(jsonCovidData);
     })
   }, []);
+
+  const handleListItemOnClickEvent = useCallback(id => {
+    const obj = jsonCovidData[id];
+    setCenter(new google.maps.LatLng(obj.latitude, obj.longitude));
+    setZoom(6);
+  }, [jsonCovidData]);
+
+  const handleOnMapRef = useCallback(ref => {
+    covidMapRef.current = ref;
+  }, [covidMapRef]);
+
+  const handleOnCenterChanged = useCallback(() => {
+    setCenter(covidMapRef.current.getCenter());
+  }, [covidMapRef]);
 
   if(!jsonCovidData) {
     return <LoadingScreen />
@@ -86,8 +103,8 @@ function App() {
         <Panel title="Confirmed Cases">
           <List>
             {
-              confirmedRows.map(({country, province, confirmed}) => (
-                <List.Item>
+              confirmedRows.map(({id, country, province, confirmed}) => (
+                <List.Item key={id} id={id} onClick={handleListItemOnClickEvent} style={{cursor: 'pointer'}}>
                   <span style={{color: '#DF0F00', fontWeight: 'bold'}}>{numberFormat.format(confirmed)}</span> {formatPlaceName({country, province})}
                 </List.Item>
               ))
@@ -98,13 +115,15 @@ function App() {
 
       <div className="Column Column-Map">
         <CovidMap
-          center = {centerCoordinates}
-          zoom = {defaultZoomValue}
+          zoom = {zoom}
           places = {places}
           googleMapURL = "https://maps.googleapis.com/maps/api/js?key=YOUR_GOOGLE_API_KEY"
           loadingElement = {<div style = {{height: `100%`}} />}
           containerElement = {<div style = {{height: `100vh`}}/>}
           mapElement = {<div style = {{height: `100%`}}/>}
+          onCenterChanged = {handleOnCenterChanged}
+          onMapRef = {handleOnMapRef}
+          center = {center}
         />
       </div>
 
@@ -112,8 +131,8 @@ function App() {
         <Panel title="Total Deaths" subtitle={numberFormat.format(totalDeaths)} subtitleStyle={{color: '#DF0F00', fontSize: '36px', lineHeight: 1}}>
           <List>
             {
-              deathRows.map(({country, province, deaths}) => (
-                <List.Item>
+              deathRows.map(({id, country, province, deaths}) => (
+                <List.Item key={id}>
                   <span style={{color: '#DF0F00', fontWeight: 'bold'}}>{numberFormat.format(deaths)}</span> <span style={{color: '#DF0F00'}}>deaths</span><br /> {formatPlaceName({country, province})}
                 </List.Item>
               ))
@@ -124,8 +143,8 @@ function App() {
         <Panel title="Total Recovered" subtitle={numberFormat.format(totalRecovered)} subtitleStyle={{color: '#41A800', fontSize: '36px', lineHeight: 1}}>
           <List>
             {
-              recoveredRows.map(({country, province, recovered}) => (
-                <List.Item>
+              recoveredRows.map(({id, country, province, recovered}) => (
+                <List.Item key={id}>
                   <span style={{color: '#41A800', fontWeight: 'bold'}}>{numberFormat.format(recovered)}</span> <span style={{color: '#41A800'}}>recoverd</span><br /> {formatPlaceName({country, province})}
                 </List.Item>
               ))
