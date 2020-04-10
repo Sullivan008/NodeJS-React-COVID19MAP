@@ -16,14 +16,8 @@ const numberFormat = new Intl.NumberFormat();
 const formatPlaceName = ({province, country}) => 
   province === country ? country : (province + " " + country).trim();
 
-const calculateRadius = (confirmed, maxConfirmed) => {
-  const min = 30;
-  const max = 300;
-
-  const radius = (confirmed / maxConfirmed) * max;
-
-  return radius < min ? min : radius;
-};
+const calculateRadius = (confirmed, maxConfirmed) => 
+  Math.log(confirmed) * 8000
   
 function App() {
   const [jsonCovidData, setData] = useState(null);

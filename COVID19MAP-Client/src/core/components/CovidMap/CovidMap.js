@@ -69,7 +69,7 @@ const CovidMap = ({zoom, center, onMapRef, places, onCenterChanged}) => {
                                                 lat: latitude,
                                                 lng: longitude
                                             }}
-                            radius = {circle.radius * covidMapZoomLevel * 1128.497220}
+                            radius = {circle.radius}
                             options = {circle.options}/> 
                 }
             </Fragment>
