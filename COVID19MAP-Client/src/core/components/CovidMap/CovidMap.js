@@ -54,7 +54,7 @@ const CovidMap = ({zoom, center, places, onZoomChanged}) => {
                     <MarkerWithLabel position = { markerPosition }
                                      labelAnchor = { covidMapMarkerLabelAnchor }
                                      labelClass = "Circle-Label">
-                        { markerLabelContent }
+                        <div dangerouslySetInnerHTML = {{__html: markerLabelContent}}/>
                     </MarkerWithLabel> : ""
                 }
 

@@ -81,12 +81,7 @@ async function saveCovidDataInJsonFile(downloadedData) {
     await writeFileAsync(DOWNLOAD_FULL_PATH, JSON.stringify(downloadedData));
 
     return true;
-}
-
-async function getCovidDataFromJsonFile() {
-    const rawData = await readFileAsync(DOWNLOAD_FULL_PATH);
-    return JSON.parse(rawData);
-}
+};
 
 async function updateCovidData() {
     const rawData = await downloadLatestCovidRawData();
@@ -96,9 +91,108 @@ async function updateCovidData() {
     await saveCovidDataInJsonFile(jsonCovidData);
 
     return true;
-}
+};
+
+const calculateCircleRadius = (confirmed) => 
+  Math.log(confirmed) * 10000;
+
+const getFormattedPlaceName = ({province, country}) => 
+  province === country ? country : (province + " " + country).trim();
+
+async function getCovidMapPlaceDatas() {
+    const rawData = await readFileAsync(DOWNLOAD_FULL_PATH);
+    const jsonData = JSON.parse(rawData);
+
+    return Object.values(jsonData)
+                 .filter(({latitude, longitude}) => latitude && longitude)
+                 .map(({id, latitude, longitude, country, province, confirmed, deaths, recovered}) => ({
+                    id,
+                    latitude,
+                    longitude,
+                    circle: {
+                    radius: calculateCircleRadius(confirmed),
+                        options: {
+                        strokeColor: "#ff0000"
+                        }
+                    },
+                    markerPosition: {
+                    lat: latitude,
+                    lng: longitude
+                    },
+                    markerLabelContent: `${getFormattedPlaceName({country, province})}<br />Confirmed ${confirmed}<br />Deaths: ${deaths}<br />Recovered: ${recovered}`
+                }));
+};
+
+async function getTotalConfirmedValue() {
+    const rawData = await readFileAsync(DOWNLOAD_FULL_PATH);
+    const jsonData = JSON.parse(rawData);
+
+    return Object.values(jsonData)
+                 .map(item => item.confirmed)
+                 .reduce((accumlator, value) => accumlator + value, 0);
+};
+
+async function getConfirmedRows() {
+    const rawData = await readFileAsync(DOWNLOAD_FULL_PATH);
+    const jsonData = JSON.parse(rawData);
+
+    return Object.values(jsonData)
+                 .filter(({confirmed}) => confirmed > 0)
+                 .sort(({confirmed: aConfirmed}, {confirmed: bConfirmed}) => bConfirmed - aConfirmed)
+                 .map(({id, province, country, confirmed}) => {
+                    return {id, province, country, confirmed};
+                });
+};
+
+async function getTotalDeathsValue() {
+    const rawData = await readFileAsync(DOWNLOAD_FULL_PATH);
+    const jsonData = JSON.parse(rawData);
+
+    return Object.values(jsonData)
+                 .map(item => item.deaths)
+                 .reduce((accumlator, value) => accumlator + value, 0);
+};
+
+async function getDeathRows() {
+    const rawData = await readFileAsync(DOWNLOAD_FULL_PATH);
+    const jsonData = JSON.parse(rawData);
+
+    return Object.values(jsonData)
+                 .filter(({deaths}) => deaths > 0)
+                 .sort(({deaths: aDeaths}, {deaths: bDeaths}) => bDeaths - aDeaths)
+                 .map(({id, province, country, deaths}) => {
+                    return {id, province, country, deaths};
+                });
+};
+
+async function getTotalRecoveredValue() {
+    const rawData = await readFileAsync(DOWNLOAD_FULL_PATH);
+    const jsonData = JSON.parse(rawData);
+
+    return Object.values(jsonData)
+                 .map(item => item.recovered)
+                 .reduce((accumlator, value) => accumlator + value, 0);
+};
+
+async function getRecoveredRows() {
+    const rawData = await readFileAsync(DOWNLOAD_FULL_PATH);
+    const jsonData = JSON.parse(rawData);
+
+    return Object.values(jsonData)
+                 .filter(({recovered}) => recovered > 0)
+                 .sort(({recovered: aRecovered}, {recovered: bRecovered}) => bRecovered - aRecovered)
+                 .map(({id, province, country, recovered}) => {
+                    return {id, province, country, recovered};
+                });
+};
 
 module.exports = {
-    getCovidDataFromJsonFile,
+    getCovidMapPlaceDatas,
+    getTotalConfirmedValue,
+    getConfirmedRows,
+    getTotalDeathsValue,
+    getDeathRows,
+    getTotalRecoveredValue,
+    getRecoveredRows,
     updateCovidData
-}
+};

@@ -2,8 +2,14 @@ const express = require('express');
 const cors = require('cors');
 
 const {
-    getCovidDataFromJsonFile,
-    updateCovidData
+    updateCovidData,
+    getCovidMapPlaceDatas,
+    getTotalConfirmedValue,
+    getConfirmedRows,
+    getTotalDeathsValue,
+    getDeathRows,
+    getTotalRecoveredValue,
+    getRecoveredRows
 } = require('./data-management');
 
 const app = express();
@@ -15,18 +21,54 @@ app.get('/', (req, res) => {
     res.send('Hello World');
 });
 
-app.get('/get-covid-data', async (req, res) => {
-    const jsonCovidData = await getCovidDataFromJsonFile();
-
-    res.json(jsonCovidData);
-});
-
 app.get('/update-covid-data', async (req, res) => {
     await updateCovidData();
 
     res.json({
         success: true
     });
+});
+
+app.get('/get-covid-map-place-datas', async (req, res) => {
+    const covidMapPlaceDatas = await getCovidMapPlaceDatas();
+
+    res.json(covidMapPlaceDatas);
+});
+
+app.get('/get-total-confirmed-value', async (req, res) => {
+    const totalConfirmed = await getTotalConfirmedValue();
+
+    res.json(totalConfirmed);
+});
+
+app.get('/get-confirmed-rows', async (req, res) => {
+    const confirmedRows = await getConfirmedRows();
+
+    res.json(confirmedRows);
+});
+
+app.get('/get-total-deaths-value', async (req, res) => {
+    const totalDeathsValue = await getTotalDeathsValue();
+
+    res.json(totalDeathsValue);
+});
+
+app.get('/get-death-rows', async (req, res) => {
+    const deathRows = await getDeathRows();
+
+    res.json(deathRows);
+});
+
+app.get('/get-total-recovered-value', async (req, res) => {
+    const totalRecoveredValue = await getTotalRecoveredValue();
+
+    res.json(totalRecoveredValue);
+});
+
+app.get('/get-recovered-rows', async (req, res) => {
+    const recoveredRows = await getRecoveredRows();
+
+    res.json(recoveredRows);
 });
 
 app.listen(port, () => {

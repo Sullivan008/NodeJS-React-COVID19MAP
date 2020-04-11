@@ -1,7 +1,13 @@
 /* global google */
 import React, { useState, useEffect, useCallback } from 'react';
 import './App.css';
-import { getJsonCovidData } from '../../api';
+import { getCovidMapPlaceDatas } from '../../api';
+import { getTotalConfirmedValue } from '../../api';
+import { getConfirmedRows } from '../../api';
+import { getTotalDeathsValue } from '../../api';
+import { getDeathRows } from '../../api';
+import { getTotalRecoveredValue } from '../../api';
+import { getRecoveredRows } from '../../api';
 
 import CovidMap from '../CovidMap/CovidMap';
 import List from '../List/List';
@@ -14,116 +20,79 @@ const numberFormatting = number => numberFormat.format(number);
 const defaultCovidMapCenterCoordinates = { lat: 6.25, lng: 18.85 };
 const defaultCovidMapZoomValue = 2;
 
-const calculateCircleRadius = (confirmed) => 
-  Math.log(confirmed) * 10000;
-
 const getFormattedPlaceName = ({province, country}) => 
   province === country ? country : (province + " " + country).trim();
 
 function App() {
-  const [covidData, setCovidData] = useState(null);
+  const [covidMapPlaceDatas, setCovidMapPlaceDatas] = useState(null);
+  const [totalConfirmedValue, setTotalConfirmedValue] = useState(null);
+  const [confirmedRows, setConfirmedRows] = useState(null);
+  const [totalDeathsValue, setTotalDeathsValue] = useState(null);
+  const [deathRows, setDeathRows] = useState(null);
+  const [totalRecoveredValue, setTotalRecoveredValue] = useState(null);
+  const [recoveredRows, setRecoveredRows] = useState(null);
   const [covidMapCenterCoordinates, setCovidMapCenterCoordinates] = useState(defaultCovidMapCenterCoordinates);
   const [covidMapZoomValue, setCovidMapZoomValue] = useState(defaultCovidMapZoomValue);
 
   useEffect(() => {
-    getJsonCovidData().then(jsonCovidData => {
+    getCovidMapPlaceDatas().then(covidMapPlaceDatas => {
+      setCovidMapPlaceDatas(Object.values(covidMapPlaceDatas));
+    });
 
-      const covidDataObject = Object.values(jsonCovidData);
-    
-      const places = 
-        covidDataObject
-          .filter(({latitude, longitude}) => latitude && longitude)
-          .map(({id, latitude, longitude, country, province, confirmed, deaths, recovered}) => ({
-            id,
-            latitude,
-            longitude,
-            circle: {
-              radius: calculateCircleRadius(confirmed),
-                options: {
-                strokeColor: "#ff0000"
-                }
-            },
-            markerPosition: {
-              lat: latitude,
-              lng: longitude
-            },
-            markerLabelContent: <div>{getFormattedPlaceName({country, province})}<br />Confirmed {confirmed}<br />Deaths: {deaths}<br />Recovered: {recovered}</div>
-          }));
-    
-      const totalConfirmed = covidDataObject
-        .map(item => item.confirmed)
-        .reduce((accumlator, value) => accumlator + value, 0);
-    
-      const confirmedRows = covidDataObject
-        .filter(({confirmed}) => confirmed > 0)
-        .sort(({confirmed: aConfirmed}, {confirmed: bConfirmed}) => bConfirmed - aConfirmed)
-    
-      const totalDeaths = covidDataObject
-        .map(item => item.deaths)
-        .reduce((accumlator, value) => accumlator + value, 0);
-    
-      const deathRows = covidDataObject
-        .filter(({deaths}) => deaths > 0)
-        .sort(({deaths: aDeaths}, {deaths: bDeaths}) => bDeaths - aDeaths);
-    
-      const totalRecovered = covidDataObject
-        .map(item => item.recovered)
-        .reduce((accumlator, value) => accumlator + value, 0);
-    
-      const recoveredRows = covidDataObject
-        .filter(({recovered}) => recovered > 0)
-        .sort(({recovered: aRecovered}, {recovered: bRecovered}) => bRecovered - aRecovered)
+    getTotalConfirmedValue().then(totalConfirmedValue => {
+      setTotalConfirmedValue(totalConfirmedValue);
+    });
 
-      setCovidData({
-        places,
-        totalConfirmed,
-        confirmedRows,
-        totalDeaths,
-        deathRows,
-        totalRecovered,
-        recoveredRows
-      });
-    })
+    getConfirmedRows().then(confirmedRows => {
+      setConfirmedRows(Object.values(confirmedRows));
+    });
+
+    getTotalDeathsValue().then(totalDeathsValue => {
+      setTotalDeathsValue(totalDeathsValue);
+    });
+
+    getDeathRows().then(deathRows => {
+      setDeathRows(Object.values(deathRows));
+    });
+
+    getTotalRecoveredValue().then(totalRecoveredValue => {
+      setTotalRecoveredValue(totalRecoveredValue)
+    });
+
+    getRecoveredRows().then(recoveredRows => {
+      setRecoveredRows(Object.values(recoveredRows));
+    });
+
   }, []);
 
   const handleListItemOnClickEvent = useCallback(selectedItemId => {
     const changedCovidMapZoomValue = 6;
-    const selectedPlace = covidData.places.find(({id}) => id === selectedItemId);
+    const selectedPlace = covidMapPlaceDatas.find(({id}) => id === selectedItemId);
 
     setCovidMapCenterCoordinates(new google.maps.LatLng(selectedPlace.latitude, selectedPlace.longitude));
     setCovidMapZoomValue(changedCovidMapZoomValue);
-  }, [covidData]);
+  }, [covidMapPlaceDatas]);
 
 
   const handleOnZoomChanged = useCallback((currentCovidMapZoomValue) => {
     setCovidMapZoomValue(currentCovidMapZoomValue);
   }, []);
 
-  if(!covidData) {
-    return <LoadingScreen />
+  if(!covidMapPlaceDatas) {
+    return <LoadingScreen loadingClassName="Loading-Default" />
   };
   
-  const {
-    places,
-    totalConfirmed,
-    confirmedRows,
-    totalDeaths,
-    deathRows,
-    totalRecovered,
-    recoveredRows
-  } = covidData;
-
   return (
     <div className="App">
       <div className="Column Column-Left">
-        <Panel title="Total Confirmed" subtitle={numberFormatting(totalConfirmed)} containerClass={"Panel-TotalConfirmed"} subtitleStyle={{color: '#DF0F00', fontSize: '36px', lineHeight: 1}}/>
+        <Panel title="Total Confirmed" subtitle={!totalConfirmedValue ? <LoadingScreen loadingClassName="Loading-SubTitle" /> : numberFormatting(totalConfirmedValue)} containerClass={"Panel-TotalConfirmed"} subtitleStyle={{color: '#DF0F00', fontSize: '36px', lineHeight: 1}}/>
 
         <Panel title="Confirmed Cases">
           <List>
             {
-              confirmedRows.map(({id, country, province, confirmed}) => (
-                <List.Item key={id} id={id} onClick={handleListItemOnClickEvent} style={{cursor: 'pointer'}}>
-                  <span style={{color: '#DF0F00', fontWeight: 'bold'}}>{numberFormatting(confirmed)}</span> {getFormattedPlaceName({country, province})}
+              !confirmedRows ? <LoadingScreen loadingClassName="Loading-Default" /> : confirmedRows.map(item => (
+                <List.Item key={item.id} id={item.id} onClick={handleListItemOnClickEvent} style={{cursor: 'pointer'}}>
+                  <span style={{color: '#DF0F00', fontWeight: 'bold'}}>{numberFormatting(item.confirmed)}</span> {getFormattedPlaceName(item)}
                 </List.Item>
               ))
             }
@@ -138,31 +107,31 @@ function App() {
           containerElement = {<div style = {{height: `100vh`}}/>}
           mapElement = {<div style = {{height: `100%`}}/>}
           zoom = { covidMapZoomValue }
-          places = { places }
+          places = { covidMapPlaceDatas }
           center = { covidMapCenterCoordinates }
           onZoomChanged = { handleOnZoomChanged }
         />
       </div>
 
       <div className="Column Column-Right">
-        <Panel title="Total Deaths" subtitle={numberFormatting(totalDeaths)} subtitleStyle={{color: '#DF0F00', fontSize: '36px', lineHeight: 1}}>
+        <Panel title="Total Deaths" subtitle={!totalDeathsValue ? <LoadingScreen loadingClassName="Loading-SubTitle-WithChildren" /> : numberFormatting(totalDeathsValue)} subtitleStyle={{color: '#DF0F00', fontSize: '36px', lineHeight: 1}}>
           <List>
             {
-              deathRows.map(({id, country, province, deaths}) => (
-                <List.Item key={id}>
-                  <span style={{color: '#DF0F00', fontWeight: 'bold'}}>{numberFormatting(deaths)}</span> <span style={{color: '#DF0F00'}}>deaths</span><br /> {getFormattedPlaceName({country, province})}
+              !deathRows ? <LoadingScreen loadingClassName="Loading-Default" /> : deathRows.map(item => (
+                <List.Item key={item.id}>
+                  <span style={{color: '#DF0F00', fontWeight: 'bold'}}>{numberFormatting(item.deaths)}</span> <span style={{color: '#DF0F00'}}>deaths</span><br /> {getFormattedPlaceName(item)}
                 </List.Item>
               ))
             }
           </List>
         </Panel>
 
-        <Panel title="Total Recovered" subtitle={numberFormatting(totalRecovered)} subtitleStyle={{color: '#41A800', fontSize: '36px', lineHeight: 1}}>
+        <Panel title="Total Recovered" subtitle={!totalRecoveredValue ? <LoadingScreen loadingClassName="Loading-SubTitle-WithChildren" /> : numberFormatting(totalRecoveredValue)} subtitleStyle={{color: '#41A800', fontSize: '36px', lineHeight: 1}}>
           <List>
             {
-              recoveredRows.map(({id, country, province, recovered}) => (
-                <List.Item key={id}>
-                  <span style={{color: '#41A800', fontWeight: 'bold'}}>{numberFormatting(recovered)}</span> <span style={{color: '#41A800'}}>recoverd</span><br /> {getFormattedPlaceName({country, province})}
+              !recoveredRows ? <LoadingScreen loadingClassName="Loading-Default" /> : recoveredRows.map(item => (
+                <List.Item key={item.id}>
+                  <span style={{color: '#41A800', fontWeight: 'bold'}}>{numberFormatting(item.recovered)}</span> <span style={{color: '#41A800'}}>recoverd</span><br /> {getFormattedPlaceName(item)}
                 </List.Item>
               ))
             }

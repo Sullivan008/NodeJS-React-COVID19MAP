@@ -1,4 +1,4 @@
-.Loading {
+.Loading-Default {
     position: absolute;
     top: 50%;
     left: 50%;
@@ -8,9 +8,29 @@
     align-items: center;
 }
 
+.Loading-SubTitle {
+    position: absolute;
+    top: 70%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    height: 40px;
+    display: flex;
+    align-items: center;
+}
+
+.Loading-SubTitle-WithChildren {
+    position: absolute;
+    top: 21%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    height: 40px;
+    display: flex;
+    align-items: center;
+}
+
 .Loading-Obj {
     width: 6px;
-    height: 40px;
+    height: 30px;
     background: blue;
     margin: 0 3px;
     border-radius: 10px;

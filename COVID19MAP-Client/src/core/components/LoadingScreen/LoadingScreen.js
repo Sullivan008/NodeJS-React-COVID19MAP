@@ -1,8 +1,8 @@
 import React from 'react';
 import './LoadingScreen.css';
 
-const SiteLoadingScreen = () => (
-    <div className="Loading">
+const SiteLoadingScreen = ({loadingClassName}) => (
+    <div className={loadingClassName}>
         <div className="Loading-Obj"></div>
         <div className="Loading-Obj"></div>
         <div className="Loading-Obj"></div>
