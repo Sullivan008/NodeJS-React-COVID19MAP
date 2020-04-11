@@ -1,88 +1,77 @@
-
 /* global google */
-import React, { Fragment, useCallback, useRef, useState, useEffect } from "react";
+import React, { Fragment, useRef, useState, useEffect, useCallback } from "react";
+
 import { withGoogleMap, GoogleMap, withScriptjs, Circle } from "react-google-maps";
 import { MarkerWithLabel } from "react-google-maps/lib/components/addons/MarkerWithLabel";
+
 import './CovidMap.css';
 
-const labelStyle = {
-    background: "black",
-    color: "white",
-    textAlign: "center",
-    fontSize: "11px",
-    padding: "2px",
-    opacity: "0.5",
-    transform: 'translateX(-50%) translateY(16px)'
-};
+const placeCircleMarkerLabelIsVisible = covidMapZoomLevel => covidMapZoomLevel > 5;
 
-const pointIsVisible = (covidMapBounds, {latitude, longitude}) => 
+const placeIsVisible = (covidMapBounds, {latitude, longitude}) => 
     covidMapBounds.contains(new google.maps.LatLng(latitude, longitude));
 
-const CovidMap = ({zoom, center, onMapRef, places, onCenterChanged}) => {
+const CovidMap = ({zoom, center, places, onZoomChanged}) => {
     const covidMapRef = useRef(null);
-    const [covidMapZoomLevel, setZoomLevel] = useState(zoom);
-    const [covidMapBounds, setBounds] = useState(null);
-
-    const canShowCovidMapCircleLabel = covidMapZoomLevel => covidMapZoomLevel > 4;
-
-    const handleZoomChanged = useCallback(() => {
-        setZoomLevel(covidMapRef.current.getZoom());
-        setBounds(covidMapRef.current.getBounds());
-    }, [covidMapRef]);
-
-    const handleOnDragEnd = useCallback(() => {
-        setBounds(covidMapRef.current.getBounds());
-    }, [covidMapRef]);
-
-    if(covidMapRef.current && covidMapBounds === null) {
-        setBounds(covidMapRef.current.getBounds());
-    }
-
+    const [visiblePlaceIds, setVisiblePlaceIds] = useState({});
+    const [covidMapMarkerLabelAnchor] = useState(new google.maps.Point(0,0));
+    
     useEffect(() => {
-        setZoomLevel(covidMapRef.current.getZoom());
-        setBounds(covidMapRef.current.getBounds());
-    }, [zoom, center])
+        const interval = setInterval(() => {
+            if(!covidMapRef.current) {
+                return;
+            }
 
-    useEffect(() => {
-        onMapRef(covidMapRef.current);
-    }, [onMapRef, covidMapRef])
+            const currentCovidMapBounds = covidMapRef.current.getBounds();
+            const currentCovidMapZoomLevel = covidMapRef.current.getZoom();
 
-    const covidMapPlaces = places.map(({id, latitude, longitude, text, circle}) => { 
+            const visiblePlaceIds = {};
+
+            for(const {id, latitude, longitude} of places) {
+                visiblePlaceIds[id] = placeCircleMarkerLabelIsVisible(currentCovidMapZoomLevel) && placeIsVisible(currentCovidMapBounds, {latitude, longitude})
+            }
+
+            setVisiblePlaceIds(visiblePlaceIds);
+        }, 100);
+
+        return () => {
+            clearInterval(interval);
+        }
+    }, [places]);
+
+    const handleCovidMapZoomChanged = useCallback(() => {
+        if(!onZoomChanged){
+            return;
+        }
+
+        onZoomChanged(covidMapRef.current.getZoom());
+    }, [onZoomChanged]);
+    
+    const covidMapPlaces = places.map(({id, markerPosition, markerLabelContent, circle}) => { 
         return (
             <Fragment key = {id}>
-                {canShowCovidMapCircleLabel(covidMapZoomLevel) && 
-                  pointIsVisible(covidMapBounds, {latitude, longitude}) ? 
-                    <MarkerWithLabel position = {{ 
-                                                    lat: latitude,
-                                                    lng: longitude
-                                                }}
-                                     labelAnchor = { new google.maps.Point(0,0) }
-                                     labelStyle = {labelStyle}
-                    >
-                        <div dangerouslySetInnerHTML = {{__html: text}}/>
+                {visiblePlaceIds[id] ? 
+                    <MarkerWithLabel position = { markerPosition }
+                                     labelAnchor = { covidMapMarkerLabelAnchor }
+                                     labelClass = "Circle-Label">
+                        { markerLabelContent }
                     </MarkerWithLabel> : ""
                 }
 
                 { 
-                    circle && 
-                    <Circle defaultCenter = {{
-                                                lat: latitude,
-                                                lng: longitude
-                                            }}
-                            radius = {circle.radius}
-                            options = {circle.options}/> 
+                    circle && <Circle defaultCenter = { markerPosition }
+                                      radius = { circle.radius }
+                                      options = { circle.options }/> 
                 }
             </Fragment>
         )});
 
     return(
-        <GoogleMap onZoomChanged = {handleZoomChanged}
-                   onDragEnd = {handleOnDragEnd}
-                   ref = {covidMapRef}
-                   onCenterChanged = {onCenterChanged}
-                   zoom = {zoom}
-                   center = {center}>
-            {covidMapPlaces}
+        <GoogleMap onZoomChanged = { handleCovidMapZoomChanged }
+                   ref = { covidMapRef }
+                   zoom = { zoom }
+                   center = { center }>
+            { covidMapPlaces }
         </GoogleMap>
     );
 };

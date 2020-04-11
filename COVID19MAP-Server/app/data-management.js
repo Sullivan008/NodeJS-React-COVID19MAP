@@ -48,10 +48,6 @@ async function convertingCovidDataToJsonFromArrayData(arrayData) {
             ) => {
                 const id = province + '-' + country;
 
-                if(!{latitude, longitude}){
-                    return;
-                }
-
                 if(accumlator[id]) {
                     accumlator[id] = {
                         ...accumlator[id],
