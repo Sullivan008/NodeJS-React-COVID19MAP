@@ -2,7 +2,6 @@ const express = require('express');
 const cors = require('cors');
 
 const {
-    updateCovidData,
     getCovidMapPlaceDatas,
     getTotalConfirmedValue,
     getConfirmedRows,
@@ -10,7 +9,7 @@ const {
     getDeathRows,
     getTotalRecoveredValue,
     getRecoveredRows
-} = require('./data-management');
+} = require('./components/data-services');
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -19,14 +18,6 @@ app.use(cors());
 
 app.get('/', (req, res) => {
     res.send('Hello World');
-});
-
-app.get('/update-covid-data', async (req, res) => {
-    await updateCovidData();
-
-    res.json({
-        success: true
-    });
 });
 
 app.get('/get-covid-map-place-datas', async (req, res) => {

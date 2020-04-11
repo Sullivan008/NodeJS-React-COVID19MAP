@@ -1,11 +1,15 @@
 const CronJob = require('cron').CronJob;
 
-const { updateCovidData } = require('./data-management');
+const { updateCovidData } = require('./components/data-management');
 
 const job = new CronJob('0 */1 * * *', async () => {
-    await updateCovidData();
+    const serviceResponse = await updateCovidData();
 
-    console.log("Data was updated successfully!");
+    if(serviceResponse){
+        console.log("\nData was updated successfully!");
+    } else {
+        console.log("\nData update failed! Please check more information server console log!");
+    }
 });
 
 job.start();
