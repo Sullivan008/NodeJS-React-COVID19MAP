@@ -36,6 +36,12 @@ export const getDeathRows = async() => {
     return await serviceResponse.json();
 }
 
+export const getDeathRowById = async(rowId) => {
+    const serviceResponse = await window.fetch(`${BASE_URL}/get-death-row-by-id?rowId=${rowId}`);
+    
+    return await serviceResponse.json();
+}
+
 export const getTotalRecoveredValue = async() => {
     const serviceResponse = await window.fetch(`${BASE_URL}/get-total-recovered-value`);
     
@@ -44,6 +50,12 @@ export const getTotalRecoveredValue = async() => {
 
 export const getRecoveredRows = async() => {
     const serviceResponse = await window.fetch(`${BASE_URL}/get-recovered-rows`);
+    
+    return await serviceResponse.json();
+}
+
+export const getRecoveredRowById = async(rowId) => {
+    const serviceResponse = await window.fetch(`${BASE_URL}/get-recovered-row-by-id?rowId=${rowId}`);
     
     return await serviceResponse.json();
 }

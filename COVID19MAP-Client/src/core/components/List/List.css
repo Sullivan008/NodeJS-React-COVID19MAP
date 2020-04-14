@@ -1,9 +1,28 @@
 .List-Item {
     padding: 8px 0;
+    padding-left: 10px;
 }
 
 .List-Item-Clickable {
     cursor: pointer;
+    border: none;
+    /* Safari */
+    -webkit-transition-duration: 0.4s;
+    transition-duration: 0.4s;
+}
+
+.List-Item-Clickable:hover {
+    background-color: #dddddd;
+    border-radius: 5px;
+}
+
+.List-Item-Selected {
+    background-color: #dddddd;
+    border-radius: 5px;
+}
+
+.List-Item-Clickable.List-Item-Selected:hover {
+    background-color: #c4c3c3;
 }
 
 .List-Item+.List-Item {

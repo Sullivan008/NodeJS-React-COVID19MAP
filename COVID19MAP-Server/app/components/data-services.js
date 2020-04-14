@@ -12,6 +12,9 @@ const calculateCircleRadius = (confirmed) =>
 const getFormattedPlaceName = ({province, country}) => 
     province === country ? country : (province + " " + country).trim();
 
+const numberFormat = new Intl.NumberFormat();
+const numberFormatting = number => numberFormat.format(number);
+
 async function getCovidMapPlaceDatas() {
     const rawData = await readFileAsync(DOWNLOADED_FILE_FULL_PATH);
     const jsonData = JSON.parse(rawData);
@@ -32,7 +35,7 @@ async function getCovidMapPlaceDatas() {
                     lat: latitude,
                     lng: longitude
                     },
-                    markerLabelContent: `${getFormattedPlaceName({country, province})}<br />Confirmed ${confirmed}<br />Deaths: ${deaths}<br />Recovered: ${recovered}`
+                    markerLabelContent: `${getFormattedPlaceName({country, province})}<br />Confirmed ${numberFormatting(confirmed)}<br />Deaths: ${numberFormatting(deaths)}<br />Recovered: ${numberFormatting(recovered)}`
                 }));
 };
 
@@ -78,6 +81,18 @@ async function getDeathRows() {
                 });
 };
 
+async function getDeathRowById(rowId) {
+    const rawData = await readFileAsync(DOWNLOADED_FILE_FULL_PATH);
+    const jsonData = JSON.parse(rawData);
+
+    return Object.values(jsonData)
+                 .filter(({id, deaths}) => deaths > 0 && id === rowId)
+                 .sort(({deaths: aDeaths}, {deaths: bDeaths}) => bDeaths - aDeaths)
+                 .map(({id, province, country, deaths}) => {
+                    return {id, province, country, deaths};
+                });
+};
+
 async function getTotalRecoveredValue() {
     const rawData = await readFileAsync(DOWNLOADED_FILE_FULL_PATH);
     const jsonData = JSON.parse(rawData);
@@ -99,12 +114,26 @@ async function getRecoveredRows() {
                  });
 };
 
+async function getRecoveredRowById(rowId) {
+    const rawData = await readFileAsync(DOWNLOADED_FILE_FULL_PATH);
+    const jsonData = JSON.parse(rawData);
+
+    return Object.values(jsonData)
+                 .filter(({id, recovered}) => recovered > 0 && id === rowId)
+                 .sort(({recovered: aRecovered}, {recovered: bRecovered}) => bRecovered - aRecovered)
+                 .map(({id, province, country, recovered}) => {
+                    return {id, province, country, recovered};
+                });
+};
+
 module.exports = {
     getCovidMapPlaceDatas,
     getTotalConfirmedValue,
     getConfirmedRows,
     getTotalDeathsValue,
     getDeathRows,
+    getDeathRowById,
     getTotalRecoveredValue,
     getRecoveredRows,
+    getRecoveredRowById
 };
