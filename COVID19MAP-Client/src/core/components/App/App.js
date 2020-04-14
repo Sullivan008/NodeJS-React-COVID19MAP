@@ -120,7 +120,7 @@ function App() {
 
       setCovidMapZoomValue(defaultCovidMapZoomValue);
     }
-  }, [covidMapPlaceDatas, confirmedRows, selectedConfirmedRowId, totalConfirmedValue, totalDeathsValue, deathRows, recoveredRows, defaultCovidMapZoomValue]);
+  }, [covidMapPlaceDatas, confirmedRows, selectedConfirmedRowId]);
 
   const handleOnZoomChanged = useCallback((currentCovidMapZoomValue) => {
     setCovidMapZoomValue(currentCovidMapZoomValue);
