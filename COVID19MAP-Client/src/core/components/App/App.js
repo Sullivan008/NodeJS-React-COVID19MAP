@@ -80,7 +80,12 @@ function App() {
       
       getDeathRowById(selectedItemId).then(deathRows => {
         setDeathRows(Object.values(deathRows));
-        setTotalDeathsValue(Object.values(deathRows).find(({id}) => id === selectedItemId).deaths)
+
+        if(deathRows.length !== 0){
+          setTotalDeathsValue(recoveredRows && Object.values(deathRows).find(({id}) => id === selectedItemId).deaths)
+        } else {
+          setTotalDeathsValue("No data available in this place")
+        }
       });
 
       getRecoveredRowById(selectedItemId).then(recoveredRows => {
@@ -167,7 +172,7 @@ function App() {
 
       <div className = "Column Column-Right">
         <Panel title = "Total Deaths"
-               subtitle = {!totalDeathsValue ? <LoadingScreen loadingClassName = "Loading-SubTitle-WithChildren" /> : numberFormatting(totalDeathsValue)}
+               subtitle = {!totalDeathsValue ? <LoadingScreen loadingClassName = "Loading-SubTitle-WithChildren" /> : (typeof totalDeathsValue === 'string' || totalDeathsValue instanceof String ? totalDeathsValue : numberFormatting(totalDeathsValue))}
                externalSubtitleClassName = "TotalDeaths">
           <List>
             {
