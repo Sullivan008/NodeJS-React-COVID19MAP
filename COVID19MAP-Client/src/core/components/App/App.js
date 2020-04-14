@@ -1,6 +1,7 @@
 /* global google */
 import React, { useState, useEffect, useCallback } from 'react';
 import './App.css';
+
 import { getCovidMapPlaceDatas } from '../../api';
 import { getTotalConfirmedValue } from '../../api';
 import { getConfirmedRows } from '../../api';
@@ -73,26 +74,29 @@ function App() {
     setCovidMapZoomValue(changedCovidMapZoomValue);
   }, [covidMapPlaceDatas]);
 
-
   const handleOnZoomChanged = useCallback((currentCovidMapZoomValue) => {
     setCovidMapZoomValue(currentCovidMapZoomValue);
   }, []);
 
-  if(!covidMapPlaceDatas) {
-    return <LoadingScreen loadingClassName="Loading-Default" />
+  if (!covidMapPlaceDatas) {
+    return <LoadingScreen loadingClassName = "Loading-Default" />
   };
   
   return (
-    <div className="App">
-      <div className="Column Column-Left">
-        <Panel title="Total Confirmed" subtitle={!totalConfirmedValue ? <LoadingScreen loadingClassName="Loading-SubTitle" /> : numberFormatting(totalConfirmedValue)} containerClass={"Panel-TotalConfirmed"} subtitleStyle={{color: '#DF0F00', fontSize: '36px', lineHeight: 1}}/>
+    <div className = "App">
+      <div className = "Column Column-Left">
+        <Panel title = "Total Confirmed" 
+               subtitle = {!totalConfirmedValue ? <LoadingScreen loadingClassName = "Loading-SubTitle" /> : numberFormatting(totalConfirmedValue)} 
+               containerClassName = "Panel-TotalConfirmed"
+               externalSubtitleClassName = "TotalConfirmed"/>
 
-        <Panel title="Confirmed Cases">
+        <Panel title = "Confirmed Cases">
           <List>
             {
-              !confirmedRows ? <LoadingScreen loadingClassName="Loading-Default" /> : confirmedRows.map(item => (
-                <List.Item key={item.id} id={item.id} onClick={handleListItemOnClickEvent} style={{cursor: 'pointer'}}>
-                  <span style={{color: '#DF0F00', fontWeight: 'bold'}}>{numberFormatting(item.confirmed)}</span> {getFormattedPlaceName(item)}
+              !confirmedRows ? <LoadingScreen loadingClassName = "Loading-Default" /> : 
+              confirmedRows.map(item => (
+                <List.Item key = {item.id} id = {item.id} onClick = {handleListItemOnClickEvent} externalClassName = "List-Item-Clickable">
+                  <span className = "ConfirmedCases-Number">{numberFormatting(item.confirmed)}</span> {getFormattedPlaceName(item)}
                 </List.Item>
               ))
             }
@@ -100,12 +104,12 @@ function App() {
         </Panel>
       </div>
 
-      <div className="Column Column-Map">
+      <div className = "Column Column-Map">
         <CovidMap
           googleMapURL = {`https://maps.googleapis.com/maps/api/js?key=${process.env.REACT_APP_GOOGLE_MAPS_API_KEY || 'YOUR_GOOGLE_API_KEY'}`}
-          loadingElement = {<div style = {{height: `100%`}} />}
-          containerElement = {<div style = {{height: `100vh`}}/>}
-          mapElement = {<div style = {{height: `100%`}}/>}
+          loadingElement = {<div className = "Map-LoadingElement" />}
+          containerElement = {<div className = "Map-ContainerElement" />}
+          mapElement = {<div className = "Map-MapElement" />}
           zoom = { covidMapZoomValue }
           places = { covidMapPlaceDatas }
           center = { covidMapCenterCoordinates }
@@ -113,25 +117,31 @@ function App() {
         />
       </div>
 
-      <div className="Column Column-Right">
-        <Panel title="Total Deaths" subtitle={!totalDeathsValue ? <LoadingScreen loadingClassName="Loading-SubTitle-WithChildren" /> : numberFormatting(totalDeathsValue)} subtitleStyle={{color: '#DF0F00', fontSize: '36px', lineHeight: 1}}>
+      <div className = "Column Column-Right">
+        <Panel title = "Total Deaths"
+               subtitle = {!totalDeathsValue ? <LoadingScreen loadingClassName = "Loading-SubTitle-WithChildren" /> : numberFormatting(totalDeathsValue)}
+               externalSubtitleClassName = "TotalDeaths">
           <List>
             {
-              !deathRows ? <LoadingScreen loadingClassName="Loading-Default" /> : deathRows.map(item => (
-                <List.Item key={item.id}>
-                  <span style={{color: '#DF0F00', fontWeight: 'bold'}}>{numberFormatting(item.deaths)}</span> <span style={{color: '#DF0F00'}}>deaths</span><br /> {getFormattedPlaceName(item)}
+              !deathRows ? <LoadingScreen loadingClassName = "Loading-Default" /> : 
+              deathRows.map(item => (
+                <List.Item key = {item.id}>
+                  <span className = "TotalDeaths-Number">{numberFormatting(item.deaths)}</span> <span className = "TotalDeaths-Text">deaths</span><br /> {getFormattedPlaceName(item)}
                 </List.Item>
               ))
             }
           </List>
         </Panel>
 
-        <Panel title="Total Recovered" subtitle={!totalRecoveredValue ? <LoadingScreen loadingClassName="Loading-SubTitle-WithChildren" /> : numberFormatting(totalRecoveredValue)} subtitleStyle={{color: '#41A800', fontSize: '36px', lineHeight: 1}}>
+        <Panel title = "Total Recovered" 
+               subtitle = {!totalRecoveredValue ? <LoadingScreen loadingClassName = "Loading-SubTitle-WithChildren" /> : numberFormatting(totalRecoveredValue)}
+               externalSubtitleClassName = "TotalRecovered">
           <List>
             {
-              !recoveredRows ? <LoadingScreen loadingClassName="Loading-Default" /> : recoveredRows.map(item => (
+              !recoveredRows ? <LoadingScreen loadingClassName = "Loading-Default" /> :
+              recoveredRows.map(item => (
                 <List.Item key={item.id}>
-                  <span style={{color: '#41A800', fontWeight: 'bold'}}>{numberFormatting(item.recovered)}</span> <span style={{color: '#41A800'}}>recoverd</span><br /> {getFormattedPlaceName(item)}
+                  <span className = "TotalRecovered-Number">{numberFormatting(item.recovered)}</span> <span className = "TotalRecovered-Text">recoverd</span><br /> {getFormattedPlaceName(item)}
                 </List.Item>
               ))
             }

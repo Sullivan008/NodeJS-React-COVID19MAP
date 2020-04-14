@@ -23,6 +23,18 @@ body,
   flex: 1;
 }
 
+.Map-LoadingElement {
+  height: 100%;
+}
+
+.Map-ContainerElement {
+  height: 100vh;
+}
+
+.Map-MapElement {
+  height: 100%;
+}
+
 .Column-Right {
   padding: 16px;
   width: 20%;

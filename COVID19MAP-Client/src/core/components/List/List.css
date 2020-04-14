@@ -2,6 +2,33 @@
     padding: 8px 0;
 }
 
+.List-Item-Clickable {
+    cursor: pointer;
+}
+
 .List-Item+.List-Item {
     border-top: 1px solid #ddd;
+}
+
+div.List div.List-Item span.ConfirmedCases-Number {
+    color: #DF0F00;
+    font-weight: bold
+}
+
+div.List div.List-Item span.TotalDeaths-Number {
+    color: #DF0F00;
+    font-weight: bold;
+}
+
+div.List div.List-Item span.TotalDeaths-Text {
+    color: #DF0F00;
+}
+
+div.List div.List-Item span.TotalRecovered-Number {
+    color: #41A800;
+    font-weight: bold;
+}
+
+div.List div.List-Item span.TotalRecovered-Text {
+    color: #41A800;
 }

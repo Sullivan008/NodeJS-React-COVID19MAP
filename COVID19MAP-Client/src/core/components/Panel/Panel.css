@@ -29,6 +29,24 @@
     min-height: 36px;
 }
 
+.Panel-SubTitle.TotalConfirmed {
+    color: #DF0F00;
+    font-size: 36px;
+    line-height: 1;
+}
+
+.Panel-SubTitle.TotalDeaths {
+    color: #DF0F00;
+    font-size: 36px;
+    line-height: 1
+}
+
+.Panel-SubTitle.TotalRecovered {
+    color: #41A800;
+    font-size: 36px;
+    line-height: 1;
+}
+
 .Panel+.Panel-Title {
     margin-top: 8px;
 }

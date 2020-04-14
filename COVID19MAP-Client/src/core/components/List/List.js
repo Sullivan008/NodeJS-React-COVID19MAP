@@ -2,10 +2,10 @@ import React, { useCallback } from 'react';
 import './List.css';
 
 const List = ({children}) => (
-    <div className="List">{children}</div>
+    <div className = "List">{children}</div>
 );
   
-const ListItem = ({id, children, onClick, ...props}) => {
+const ListItem = ({id, children, onClick, externalClassName, ...props}) => {
     const handleOnClickEvent = useCallback(() => {
         if(!onClick) {
             return;
@@ -15,7 +15,7 @@ const ListItem = ({id, children, onClick, ...props}) => {
     }, [id, onClick]);
     
     return (
-        <div key={id} className="List-Item" onClick={handleOnClickEvent} {...props}>
+        <div key = {id} className = {`List-Item ${externalClassName}`} onClick = {handleOnClickEvent} {...props}>
             {children}
         </div>
     );
