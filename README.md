@@ -73,6 +73,14 @@ The map is based on multiple sources (see below for details). If you are interes
 
 The application uses the following data set as the data source (Based on data provided by Johns Hopkins University (JHU)): https://github.com/CSSEGISandData/COVID-19/tree/master/csse_covid_19_data/csse_covid_19_daily_reports
 
+The data source is queried hourly, today's data set. If this is not found, yesterday's data set will be downloaded and processed, so it is important to point out that in most cases the **SYSTEM ONLY WORKS FROM YEARYESTERDAY'S DATA**.
+
+**Attention**: The last data set tested is **April 14, 2020**. If the structure of the data source has changed, the application will not work properly! In this case, paste the following line into the **data-management.js** file so that the application works from the surely running **April 14, 2020** data that can be used to test the application.
+
+```javascript
+const DATA_URL = 'https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_daily_reports/14-04-2020.csv';
+```
+
 I cite data sources according to the data sources listed in the GitHub repository published by Johns Hopkins University (JHU) (I made the summons on April 14, 2020 https://github.com/CSSEGISandData/COVID-19): 
 
 #### "*Data Sources:*
@@ -102,3 +110,28 @@ I also quote the following about the Github account provided by Johns Hopkins Un
 *This GitHub repo and its contents herein, including all data, mapping, and analysis, copyright 2020 Johns Hopkins University, all rights reserved, is provided to the public strictly for educational and academic research purposes. The Website relies upon publicly available data from multiple sources, that do not always agree. The Johns Hopkins University hereby disclaims any and all representations and warranties with respect to the Website, including accuracy, fitness for use, and merchantability. Reliance on the Website for medical guidance or use of the Website in commerce is strictly prohibited.*"
 
 ### About the application:
+
+  - The purpose of the web application is to present the **COVID-19** *Total Confirmed and Confirmed Cases by Province/State/Dependency for worldwide*, **COVID-19** *Total Deaths and Death Numbers by Province/State/Dependency for worldwide* and **COVID-19** *Total Recovered and Recovered Numbers by Province/State/Dependency for worldwide*.
+  - The surface consists of **3 parts**:
+    - **The left column** contains the numbers *Total Confirmed* and *Confirmed Cases by Province/State/Dependency for worldwide*.
+    - **The middle column** contains the *visual appearance*.
+    - **The right column** contains *Total Deaths* and *Death Numbers by Province/State/Dependency for worldwide* and *Total Recovered* and *Recovered Numbers by Province/State/Dependency for worldwide*.
+  - For visual appearance, we use **Google Maps** provided by **Google**.
+  - The visual display:
+    - Based on the data received from the server side, based on the *Latitude* and *Longitude* for each *Confirmed Cases*, a red circle is displayed on the map.
+    - The diameter of the circle is calculated by a simple logarithm. We multiply the logarithm of the number of confirmed cases for a given case by an arbitrary number that will result in a magnification of the circle.
+  - Magnified on the map, after an *appropriate Zoom size*, the *Label for the circle* is displayed, which contains the *Name of the Marker for Latitude and Longitude*, the *number of confirmed cases*, the *number of deaths* and the *number of recovered*.
+    - If you make the *Zoom size smaller*, this Label will disappear.
+    - **NOTE**: *Circles appearing on the map are locations based on the "Province-Country" ID, not all locations with a "combinedKey" ID as defined by the reporting organization, as they are for drawing Labels the map would be impenetrable].*
+  - If you *click on an item in the Confirmed Cases list*, Focus will move to that circle on the Map, and the numbers and items in the *Total Deaths*, *Deaths List*, *Total Recovered*, *Recovered List* will be the values for that location.
+  - You can change the selections as you like, as the selected item will be displayed in a *different color*.
+  - If *you click on the selected item again*, the selection will be *deselected*, the data will be reset to all data.
+  - Data is **updated hourly**:
+    - From the previously mentioned data source, it is *queried hourly, today's data set*. **If this is not found**, *yesterday's data set will be downloaded and processed*, so it is important to point out that in most cases the **SYSTEM ONLY WORKS FROM YEARYESTERDAY'S DATA.**
+    - Because the data is constantly updated and each block is updated separately, each block has a *Loading Screen* that is displayed until the data is downloaded!
+    
+**Attention**: The last data set tested is **April 14, 2020**. If the structure of the data source has changed, the application will not work properly! In this case, paste the following line into the **data-management.js** file so that the application works from the surely running **April 14, 2020** data that can be used to test the application.
+
+```javascript
+const DATA_URL = 'https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_daily_reports/14-04-2020.csv
+```
